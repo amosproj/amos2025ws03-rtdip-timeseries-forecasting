@@ -240,17 +240,18 @@ class AutoGluonTimeSeries(MachineLearningInterface):
                                        or None if evaluation fails.
         """
         if self.predictor is None:
-            print("Error: Model has not been trained yet. Call train() first.")
-            return None
+            raise ValueError("Model has not been trained yet. Call train() first.")
 
         try:
             test_data = self._prepare_timeseries_dataframe(test_df)
 
             metrics = self.predictor.evaluate(
-                test_data, metrics=["MAE", "RMSE", "MAPE", "MASE", "SMAPE"]
+                test_data,
+                metrics=["MAE", "RMSE", "MAPE", "MASE", "SMAPE"],
             )
 
             return metrics
+
         except Exception as e:
             print(f"Error during evaluation: {str(e)}")
             return None
@@ -264,8 +265,9 @@ class AutoGluonTimeSeries(MachineLearningInterface):
                                    or None if no models have been trained.
         """
         if self.predictor is None:
-            print("Error: Model has not been trained yet. Call train() first.")
-            return None
+            raise ValueError(
+                "Error: Model has not been trained yet. Call train() first."
+            )
 
         return self.predictor.leaderboard()
 
@@ -277,8 +279,9 @@ class AutoGluonTimeSeries(MachineLearningInterface):
             Optional[str]: Name of the best model or None if no models trained.
         """
         if self.predictor is None:
-            print("Error: Model has not been trained yet. Call train() first.")
-            return None
+            raise ValueError(
+                "Error: Model has not been trained yet. Call train() first."
+            )
 
         leaderboard = self.get_leaderboard()
         if leaderboard is not None and len(leaderboard) > 0:
