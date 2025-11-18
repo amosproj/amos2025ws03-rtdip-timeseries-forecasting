@@ -1,6 +1,6 @@
 {
 	"name": "rtdip",
-	"image": "mcr.microsoft.com/azure-functions/python:4-python3.10-core-tools",
+	"image": "mambaorg/micromamba:1.5.0-jammy",
 	"forwardPorts": [ 7071, 9091 ],
 
 	"customizations": {
@@ -49,15 +49,15 @@
 		}
 	},
 	
-	"postCreateCommand": "mamba env create -f environment.yml --yes && python -m venv src/api/.venv",
+	"postCreateCommand": "micromamba env create -f environment.yml --yes",
 
-	"remoteUser": "vscode",
+	"remoteUser": "mambauser",
 	"features": {
 		"ghcr.io/devcontainers/features/git:1": {},
 		"ghcr.io/devcontainers/features/node:1": {},
 		"ghcr.io/devcontainers/features/terraform:1": {},
 		// "ghcr.io/devcontainers/features/docker-in-docker:2": {},
 		"ghcr.io/devcontainers/features/java:1": {"version": "17"},
-		"ghcr.io/rocker-org/devcontainer-features/miniforge:2": {}
+		//"ghcr.io/rocker-org/devcontainer-features/miniforge:2": {}
 	}
 }
