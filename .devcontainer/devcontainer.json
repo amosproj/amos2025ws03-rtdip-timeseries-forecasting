@@ -49,7 +49,7 @@
 		}
 	},
 	
-	"postCreateCommand": "micromamba env create -f environment.yml && micromamba activate rtdip-sdk",
+	"postCreateCommand": "micromamba env create -f environment.yml",
 
 	"remoteUser": "mambauser",
 	"features": {
