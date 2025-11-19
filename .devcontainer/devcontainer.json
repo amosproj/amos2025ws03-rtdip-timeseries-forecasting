@@ -1,6 +1,6 @@
 {
 	"name": "rtdip",
-	"image": "mambaorg/micromamba:1.5.0-jammy",
+	"image": "mambaorg/micromamba",
 	"forwardPorts": [ 7071, 9091 ],
 
 	"customizations": {
@@ -49,7 +49,7 @@
 		}
 	},
 	
-	"postCreateCommand": "micromamba env create -f environment.yml --yes",
+	"postCreateCommand": "micromamba env create -f environment.yml && micromamba activate rtdip-sdk",
 
 	"remoteUser": "mambauser",
 	"features": {

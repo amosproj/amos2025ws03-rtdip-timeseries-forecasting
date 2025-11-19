@@ -95,4 +95,4 @@ dependencies:
           - eth-typing>=5.0.1,<6.0.0
           - pandas>=2.0.1,<2.3.0
           - moto[s3]>=5.0.16,<6.0.0
-          - autogluon.timeseries
+          - autogluon.timeseries  
