@@ -1,0 +1,29 @@
+{
+  "rows": 485401,
+  "cols": 280,
+  "item_id_count": 6,
+  "time_min": "2019-01-01T00:00:00",
+  "time_max": "2021-06-16T08:20:00",
+  "sample_columns": [
+    "Date and time",
+    "Wind speed (m/s)",
+    "Wind speed",
+    "Standard deviation (m/s)",
+    "Wind speed.1",
+    "Minimum (m/s)",
+    "Wind speed.2",
+    "Maximum (m/s)",
+    "Long Term Wind (m/s)",
+    "Wind speed Sensor 1 (m/s)",
+    "Wind speed Sensor 1",
+    "Standard deviation (m/s).1",
+    "Wind speed Sensor 1.1",
+    "Minimum (m/s).1",
+    "Wind speed Sensor 1.2",
+    "Maximum (m/s).1",
+    "Wind speed Sensor 2 (m/s)",
+    "Wind speed Sensor 2",
+    "Standard deviation (m/s).2",
+    "Wind speed Sensor 2.1"
+  ]
+}

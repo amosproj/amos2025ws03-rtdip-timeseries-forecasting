@@ -140,3 +140,7 @@ config.share
 
 # JetBrains
 .idea/
+.parquet
+data/*/processed/.parquet
+pycache_/
+.pyc
