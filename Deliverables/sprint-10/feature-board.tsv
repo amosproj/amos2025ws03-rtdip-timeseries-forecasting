@@ -1,0 +1,44 @@
+Title	URL	Assignees	Status	Estimated size	Real size
+Preprocessing of 3W_Dataset	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/98		Product Backlog		
+Refactor Wiki	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/97		Product Backlog		
+Add Visualization Component for Timeseries Decomposition	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/78		Product Backlog		
+Assessment of Robustness and long time predictions	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/88		Product Backlog		
+Hyperparameter Optimization	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/99		Product Backlog		
+Preprocessing of PSML Dataset	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/75		Product Backlog		
+Timeseries Forecasting Improvement with Exogenous Variables	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/84		Product Backlog		
+Timeseries Forecasting Improvement with Feature Engineering	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/85		Product Backlog		
+Model Training and Evaluation of Dataset EIA (paused)	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/52		Product Backlog		
+Getting to Know HPC of AMOS	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/23	hpfref, Mehdi-kbz, Perimora, simonselbig	Sprint Backlog	2	
+Integrate Timeseries Forecasting Results Visualization into the SDK	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/76	simonselbig	Awaiting Review	3	
+Document previous features in the software architecture	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/89	simonselbig	Awaiting Review	2	
+Adjusting previous features to base enviroment	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/87	hpfref	Awaiting Review	2	
+Base Environment	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/86	Perimora	Awaiting Review	8	
+Add Visualization Component for Anomaly Detection	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/77	Perimora	Awaiting Review	2	
+Optimization and Improvement of Anomaly Detection Approach	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/92	Mehdi-kbz	Awaiting Review	3	
+Adjust and Fix CI/CD Pipeline	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/57	BelmontR	Awaiting Review	3	
+Refactor Components for Spark-Compatible API	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/90	BelmontR, hpfref	Awaiting Review	3	
+Optimization and Improvement of Anomaly Detection Approach	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/66	Perimora	Feature Archive	3	3
+Timeseries Forecasting Improvement with Other Models	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/74	BelmontR	Feature Archive	3	3
+Apply Timeseries Decomposition on shell Dataset	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/67	hpfref	Feature Archive	3	2
+Perform Data Exploration additional Opensource Dataset	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/18	Perimora	Feature Archive	3	3
+Restructure and Refactor Wiki	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/63	Mehdi-kbz	Feature Archive	2	2
+Model Optimization and Improvement for Timeseries Forecasting	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/65	BelmontR	Feature Archive	3	3
+Collect and Document Customer Feedback on Project Progress	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/39	hpfref, Perimora, simonselbig, SirGankalot, zenzeii	Feature Archive	1	1
+Implement RTDIP Ingestion	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/62	hpfref	Feature Archive	2	2
+Standardize Visualization	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/68	simonselbig	Feature Archive	3	3
+Implementation of Anomaly Detection	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/55	BelmontR, Mehdi-kbz, Perimora	Feature Archive	5	5
+Implementation of Time Series Decomposition	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/54	hpfref	Feature Archive	3	3
+Model Optimization and Improvement	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/43	simonselbig	Feature Archive	3	3
+Model Training and Evaluation of Dataset SCADA	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/53	BelmontR	Feature Archive	2	3
+Update Software Architecture	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/46	Perimora	Feature Archive	2	2
+Model Deployment Pipeline into RTDIP	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/42	BelmontR, hpfref, simonselbig	Feature Archive	3	3
+Repository Structure Refactor	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/44	BelmontR, hpfref	Feature Archive	2	2
+Preprocess Opensource Wind Farm SCADA Dataset	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/33	AbdulHaseeb-SE, BelmontR	Feature Archive	3	3
+User/Design/Build Documentation	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/40	Mehdi-kbz	Feature Archive	2	2
+Set Up Unified Development Environment	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/37	Perimora	Feature Archive	3	5
+Preprocess Opensource EIA Open Data	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/50	hpfref	Feature Archive	3	3
+Research Possible Models Useful for Opensource Dataset	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/6	AbdulHaseeb-SE, Mehdi-kbz	Feature Archive	2	2
+PO Homework	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/36	SirGankalot, zenzeii	Feature Archive	3	2
+Create Build Process Video	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/30	Perimora	Feature Archive	2	2
+Implementing a basic Model pipeline	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/24	BelmontR	Feature Archive	2	2
+Perform Data Exploration on Opensource Dataset 1	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/17	Mehdi-kbz, Perimora	Feature Archive	2	3
