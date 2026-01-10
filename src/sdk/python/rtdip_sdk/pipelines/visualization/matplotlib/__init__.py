@@ -16,7 +16,7 @@
 Matplotlib-based visualization components for RTDIP.
 
 This module provides static visualization classes using Matplotlib and Seaborn
-for time series forecasting, anomaly detection, and model comparison.
+for time series forecasting, anomaly detection, model comparison, and decomposition.
 
 Classes:
     ForecastPlot: Single sensor forecast with confidence intervals
@@ -34,6 +34,11 @@ Classes:
     ComparisonDashboard: Model comparison dashboard
 
     AnomalyDetectionPlot: Static plot of time series with anomalies
+
+    DecompositionPlot: Time series decomposition (original, trend, seasonal, residual)
+    MSTLDecompositionPlot: MSTL decomposition with multiple seasonal components
+    DecompositionDashboard: Comprehensive decomposition dashboard with statistics
+    MultiSensorDecompositionPlot: Grid view of multiple sensor decompositions
 """
 
 from .forecasting import (
@@ -55,4 +60,10 @@ from .comparison import (
 )
 from .anomaly_detection import (
     AnomalyDetectionPlot
+)
+from .decomposition import (
+    DecompositionPlot,
+    MSTLDecompositionPlot,
+    DecompositionDashboard,
+    MultiSensorDecompositionPlot,
 )

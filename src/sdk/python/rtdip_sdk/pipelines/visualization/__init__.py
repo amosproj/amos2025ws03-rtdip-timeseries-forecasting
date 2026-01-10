@@ -16,8 +16,8 @@
 RTDIP Visualization Module.
 
 This module provides standardized visualization components for time series forecasting,
-anomaly detection, and model comparison. It supports both Matplotlib (static) and
-Plotly (interactive) backends.
+anomaly detection, model comparison, and time series decomposition. It supports both
+Matplotlib (static) and Plotly (interactive) backends.
 
 Submodules:
     - matplotlib: Static visualization using Matplotlib/Seaborn
@@ -27,16 +27,22 @@ Example:
     ```python
     from rtdip_sdk.pipelines.visualization.matplotlib.forecasting import ForecastPlot
     from rtdip_sdk.pipelines.visualization.plotly.forecasting import ForecastPlotInteractive
+    from rtdip_sdk.pipelines.visualization.matplotlib.decomposition import DecompositionPlot
 
-    # Static plot
+    # Static forecast plot
     plot = ForecastPlot(historical_df, forecast_df, forecast_start)
     fig = plot.plot()
     plot.save("forecast.png")
 
-    # Interactive plot
+    # Interactive forecast plot
     plot_interactive = ForecastPlotInteractive(historical_df, forecast_df, forecast_start)
     fig = plot_interactive.plot()
     plot_interactive.save("forecast.html")
+
+    # Decomposition plot
+    decomp_plot = DecompositionPlot(decomposition_df, sensor_id="SENSOR_001")
+    fig = decomp_plot.plot()
+    decomp_plot.save("decomposition.png")
     ```
 """
 

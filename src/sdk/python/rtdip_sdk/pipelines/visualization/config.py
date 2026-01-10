@@ -69,6 +69,18 @@ MODEL_COLORS: Dict[str, str] = {
     "ensemble": "#1ABC9C",
 }
 
+# Decomposition component colors
+DECOMPOSITION_COLORS: Dict[str, str] = {
+    "original": "#2C3E50",  # Dark gray (matches historical)
+    "trend": "#E74C3C",  # Red
+    "seasonal": "#3498DB",  # Blue (default for single seasonal)
+    "residual": "#27AE60",  # Green
+    # For MSTL with multiple seasonal components
+    "seasonal_daily": "#9B59B6",  # Purple
+    "seasonal_weekly": "#1ABC9C",  # Teal
+    "seasonal_yearly": "#F39C12",  # Orange
+}
+
 # Confidence interval alpha values
 CI_ALPHA: Dict[int, float] = {
     60: 0.3,  # 60% - most opaque
@@ -87,6 +99,11 @@ FIGSIZE: Dict[str, Tuple[float, float]] = {
     "grid_large": (18, 12),  # 6-9 subplot grid
     "dashboard": (20, 16),  # Full dashboard with 9+ subplots
     "wide": (16, 5),  # Wide single plot
+    # Decomposition-specific sizes
+    "decomposition_4panel": (14, 12),  # STL/Classical (4 subplots)
+    "decomposition_5panel": (14, 14),  # MSTL with 2 seasonals
+    "decomposition_6panel": (14, 16),  # MSTL with 3 seasonals
+    "decomposition_dashboard": (16, 14),  # Decomposition dashboard
 }
 
 # EXPORT SETTINGS
@@ -146,6 +163,16 @@ METRICS: Dict[str, Dict[str, str]] = {
 
 # Metric display order (left to right, top to bottom)
 METRIC_ORDER: list = ["mae", "rmse", "mse", "mape", "smape", "r2"]
+
+# Decomposition statistics metrics
+DECOMPOSITION_METRICS: Dict[str, Dict[str, str]] = {
+    "variance_pct": {"name": "Variance %", "format": ".1f"},
+    "seasonality_strength": {"name": "Strength", "format": ".3f"},
+    "residual_mean": {"name": "Mean", "format": ".4f"},
+    "residual_std": {"name": "Std Dev", "format": ".4f"},
+    "residual_skew": {"name": "Skewness", "format": ".3f"},
+    "residual_kurtosis": {"name": "Kurtosis", "format": ".3f"},
+}
 
 # OUTPUT DIRECTORY SETTINGS
 DEFAULT_OUTPUT_DIR: str = "output_images"
@@ -263,3 +290,77 @@ def get_figsize_for_grid(n_plots: int) -> Tuple[float, float]:
         return FIGSIZE["grid_large"]
     else:
         return FIGSIZE["dashboard"]
+
+
+def get_seasonal_color(period: int, index: int = 0) -> str:
+    """
+    Get color for a seasonal component based on period or index.
+
+    Maps common period values to semantically meaningful colors.
+    Falls back to colorblind palette for unknown periods.
+
+    Args:
+        period: The seasonal period (e.g., 24 for daily in hourly data)
+        index: Fallback index for unknown periods
+
+    Returns:
+        Hex color code string
+
+    Example
+    --------
+    ```python
+    from rtdip_sdk.pipelines.visualization.config import get_seasonal_color
+
+    color = get_seasonal_color(24)  # Returns daily color (purple)
+    color = get_seasonal_color(168)  # Returns weekly color (teal)
+    color = get_seasonal_color(999, index=0)  # Returns first colorblind color
+    ```
+    """
+    period_colors = {
+        # Hourly data periods
+        24: DECOMPOSITION_COLORS["seasonal_daily"],  # Daily cycle
+        168: DECOMPOSITION_COLORS["seasonal_weekly"],  # Weekly cycle
+        8760: DECOMPOSITION_COLORS["seasonal_yearly"],  # Yearly cycle
+        # Minute data periods
+        1440: DECOMPOSITION_COLORS["seasonal_daily"],  # Daily (1440 min)
+        10080: DECOMPOSITION_COLORS["seasonal_weekly"],  # Weekly (10080 min)
+        # Daily data periods
+        7: DECOMPOSITION_COLORS["seasonal_weekly"],  # Weekly cycle
+        365: DECOMPOSITION_COLORS["seasonal_yearly"],  # Yearly cycle
+        366: DECOMPOSITION_COLORS["seasonal_yearly"],  # Yearly (leap year)
+    }
+
+    if period in period_colors:
+        return period_colors[period]
+
+    # Fallback to colorblind palette by index
+    return COLORBLIND_PALETTE[index % len(COLORBLIND_PALETTE)]
+
+
+def get_decomposition_figsize(n_seasonal_components: int) -> Tuple[float, float]:
+    """
+    Get appropriate figure size for decomposition plots.
+
+    Args:
+        n_seasonal_components: Number of seasonal components (1 for STL, 2+ for MSTL)
+
+    Returns:
+        Tuple of (width, height) in inches
+
+    Example
+    --------
+    ```python
+    from rtdip_sdk.pipelines.visualization.config import get_decomposition_figsize
+
+    figsize = get_decomposition_figsize(1)  # Returns 4-panel size
+    figsize = get_decomposition_figsize(2)  # Returns 5-panel size
+    ```
+    """
+    total_panels = 3 + n_seasonal_components  # original, trend, seasonal(s), residual
+
+    if total_panels <= 4:
+        return FIGSIZE["decomposition_4panel"]
+    elif total_panels == 5:
+        return FIGSIZE["decomposition_5panel"]
+    else:
+        return FIGSIZE["decomposition_6panel"]
