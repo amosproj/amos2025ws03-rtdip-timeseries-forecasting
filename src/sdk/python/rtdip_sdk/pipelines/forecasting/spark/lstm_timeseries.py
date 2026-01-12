@@ -38,6 +38,7 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 
 from ..interfaces import MachineLearningInterface
 from ..._pipeline_utils.models import Libraries, SystemType, PyPiLibrary
+from ..prediction_evaluation import calculate_timeseries_forecasting_metrics, calculate_timeseries_robustness_metrics
 
 
 class LSTMTimeSeries(MachineLearningInterface):
@@ -427,47 +428,18 @@ class LSTMTimeSeries(MachineLearningInterface):
 
         print(f"Evaluated on {len(y_true)} predictions")
 
-        mae = mean_absolute_error(y_true, y_pred)
-        rmse = np.sqrt(mean_squared_error(y_true, y_pred))
+        metrics = calculate_timeseries_forecasting_metrics(y_true, y_pred)
+        r_metrics = calculate_timeseries_robustness_metrics(y_true, y_pred)
 
-        # MAPE with filtering
-        non_zero_mask = np.abs(y_true) >= 0.1
-        if np.sum(non_zero_mask) > 0:
-            mape = mean_absolute_percentage_error(
-                y_true[non_zero_mask], y_pred[non_zero_mask]
-            )
-        else:
-            mape = np.nan
+        print("\nLSTM Metrics:")
+        print("-" * 80)
+        for metric_name, metric_value in metrics.items():
+            print(f"{metric_name:20s}: {abs(metric_value):.4f}")
+        print("")
+        for metric_name, metric_value in r_metrics.items():
+            print(f"{metric_name:20s}: {abs(metric_value):.4f}")
 
-        # MASE - calculate naive baseline per sensor
-        naive_errors = []
-        for item_id in self.item_ids:
-            item_data = pdf[pdf[self.item_id_col] == item_id]
-            if len(item_data) > 1:
-                item_true = item_data[self.target_col].values
-                naive_forecast = item_true[:-1]
-                naive_error = mean_absolute_error(item_true[1:], naive_forecast)
-                naive_errors.append(naive_error)
-
-        mae_naive = sum(naive_errors) / len(naive_errors) if naive_errors else 1.0
-        mase = mae / mae_naive if mae_naive != 0 else mae
-
-        # SMAPE
-        smape = (
-            100
-            * (
-                2 * np.abs(y_true - y_pred) / (np.abs(y_true) + np.abs(y_pred) + 1e-10)
-            ).mean()
-        )
-
-        # Return in AutoGluon format (negative is better)
-        return {
-            "MAE": -mae,
-            "RMSE": -rmse,
-            "MAPE": -mape,
-            "MASE": -mase,
-            "SMAPE": -smape,
-        }
+        return metrics
 
     def save(self, path: str):
         """Save trained model."""
