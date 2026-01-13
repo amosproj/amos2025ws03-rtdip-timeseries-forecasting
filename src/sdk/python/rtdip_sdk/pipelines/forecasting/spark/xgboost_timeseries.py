@@ -32,6 +32,7 @@ from typing import Dict, List, Optional
 
 from ..interfaces import MachineLearningInterface
 from ..._pipeline_utils.models import Libraries, SystemType, PyPiLibrary
+from ..prediction_evaluation import calculate_timeseries_forecasting_metrics, calculate_timeseries_robustness_metrics
 
 
 class XGBoostTimeSeries(MachineLearningInterface):
@@ -341,47 +342,14 @@ class XGBoostTimeSeries(MachineLearningInterface):
 
         print(f"Evaluated on {len(y_test)} predictions")
 
-        mae = mean_absolute_error(y_test, y_pred)
-        mse = mean_squared_error(y_test, y_pred)
-        rmse = np.sqrt(mse)
-
-        # MAPE (filter near-zero values)
-        non_zero_mask = np.abs(y_test) >= 0.1
-        if np.sum(non_zero_mask) > 0:
-            mape = mean_absolute_percentage_error(
-                y_test[non_zero_mask], y_pred[non_zero_mask]
-            )
-        else:
-            mape = np.nan
-
-        # MASE (Mean Absolute Scaled Error)
-        if len(y_test) > 1:
-            naive_forecast = y_test.iloc[:-1].values
-            mae_naive = mean_absolute_error(y_test.iloc[1:], naive_forecast)
-            mase = mae / mae_naive if mae_naive != 0 else mae
-        else:
-            mase = np.nan
-
-        # SMAPE (Symmetric Mean Absolute Percentage Error)
-        smape = (
-            100
-            * (
-                2 * np.abs(y_test - y_pred) / (np.abs(y_test) + np.abs(y_pred) + 1e-10)
-            ).mean()
-        )
-
-        # AutoGluon uses negative metrics (higher is better)
-        metrics = {
-            "MAE": -mae,
-            "RMSE": -rmse,
-            "MAPE": -mape,
-            "MASE": -mase,
-            "SMAPE": -smape,
-        }
+        metrics = calculate_timeseries_forecasting_metrics(y_test, y_pred)
+        r_metrics = calculate_timeseries_robustness_metrics(y_test, y_pred)
 
         print("\nXGBoost Metrics:")
         print("-" * 80)
         for metric_name, metric_value in metrics.items():
             print(f"{metric_name:20s}: {abs(metric_value):.4f}")
-
+        print("")
+        for metric_name, metric_value in r_metrics.items():
+            print(f"{metric_name:20s}: {abs(metric_value):.4f}")
         return metrics

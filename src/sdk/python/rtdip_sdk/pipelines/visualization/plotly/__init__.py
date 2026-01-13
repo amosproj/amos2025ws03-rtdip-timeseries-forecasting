@@ -16,7 +16,7 @@
 Plotly-based interactive visualization components for RTDIP.
 
 This module provides interactive visualization classes using Plotly
-for time series forecasting, anomaly detection, and model comparison.
+for time series forecasting, anomaly detection, model comparison, and decomposition.
 
 Classes:
     ForecastPlotInteractive: Interactive forecast with confidence intervals
@@ -30,6 +30,10 @@ Classes:
     ForecastDistributionPlotInteractive: Interactive distribution comparison
 
     AnomalyDetectionPlotInteractive: Interactive plot of time series with anomalies
+
+    DecompositionPlotInteractive: Interactive decomposition plot with zoom/pan
+    MSTLDecompositionPlotInteractive: Interactive MSTL decomposition
+    DecompositionDashboardInteractive: Interactive decomposition dashboard with statistics
 """
 
 from .forecasting import (
@@ -47,4 +51,9 @@ from .comparison import (
 
 from .anomaly_detection import (
     AnomalyDetectionPlotInteractive
+)
+from .decomposition import (
+    DecompositionPlotInteractive,
+    MSTLDecompositionPlotInteractive,
+    DecompositionDashboardInteractive,
 )
