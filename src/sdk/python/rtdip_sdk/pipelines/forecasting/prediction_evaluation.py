@@ -12,12 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-LSTM-based time series forecasting implementation for RTDIP.
-
-This module provides an LSTM neural network implementation for multivariate
-time series forecasting using TensorFlow/Keras with sensor embeddings.
-"""
 
 import pandas as pd
 import numpy as np
