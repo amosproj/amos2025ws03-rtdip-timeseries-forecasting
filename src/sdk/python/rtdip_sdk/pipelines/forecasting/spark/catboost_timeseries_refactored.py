@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-XGBoost Time Series Forecasting for RTDIP
+CatBoost Time Series Forecasting for RTDIP
 
 Implements gradient boosting for multi-sensor time series forecasting with feature engineering.
 """
@@ -92,9 +92,9 @@ class CatBoostTimeSeries(MachineLearningInterface):
 
     @staticmethod
     def libraries():
-        """Defines the required libraries for XGBoost TimeSeries."""
+        """Defines the required libraries for CatBoost TimeSeries."""
         libraries = Libraries()
-        libraries.add_pypi_library(PyPiLibrary(name="xgboost", version=">=1.7.0"))
+        libraries.add_pypi_library(PyPiLibrary(name="catboost", version=">=1.2.8"))
         libraries.add_pypi_library(PyPiLibrary(name="scikit-learn", version=">=1.0.0"))
         libraries.add_pypi_library(PyPiLibrary(name="pandas", version=">=1.3.0"))
         libraries.add_pypi_library(PyPiLibrary(name="numpy", version=">=1.21.0"))
@@ -159,12 +159,12 @@ class CatBoostTimeSeries(MachineLearningInterface):
 
     def train(self, train_df: DataFrame):
         """
-        Train XGBoost model on time series data.
+        Train CatBoost model on time series data.
 
         Args:
             train_df: Spark DataFrame with columns [item_id, timestamp, target]
         """
-        print("TRAINING XGBOOST MODEL")
+        print("TRAINING CATBOOST MODEL")
 
         pdf = train_df.toPandas()
         print(
@@ -198,7 +198,7 @@ class CatBoostTimeSeries(MachineLearningInterface):
         X_train = pdf_clean[self.feature_cols]
         y_train = pdf_clean[self.target_col]
 
-        print(f"\nTraining XGBoost with {len(X_train):,} samples")
+        print(f"\nTraining CatBoost with {len(X_train):,} samples")
         print(f"Features: {self.feature_cols}")
         print(f"Model parameters:")
         print(f"  max_depth: {self.max_depth}")
@@ -240,7 +240,7 @@ class CatBoostTimeSeries(MachineLearningInterface):
         Returns:
             Spark DataFrame with predictions [item_id, timestamp, predicted]
         """
-        print("GENERATING XGBOOST PREDICTIONS")
+        print("GENERATING CATBOOST PREDICTIONS")
 
         if self.model is None:
             raise ValueError("Model not trained. Call train() first.")
@@ -316,7 +316,7 @@ class CatBoostTimeSeries(MachineLearningInterface):
         Returns:
             Dictionary of metrics (MAE, RMSE, MAPE, MASE, SMAPE)
         """
-        print("EVALUATING XGBOOST MODEL")
+        print("EVALUATING CATBOOST MODEL")
 
         if self.model is None:
             raise ValueError("Model not trained. Call train() first.")
@@ -343,7 +343,7 @@ class CatBoostTimeSeries(MachineLearningInterface):
         metrics = calculate_timeseries_forecasting_metrics(y_test, y_pred)
         r_metrics = calculate_timeseries_robustness_metrics(y_test, y_pred)
 
-        print("\nXGBoost Metrics:")
+        print("\nCatBoost Metrics:")
         print("-" * 80)
         for metric_name, metric_value in metrics.items():
             print(f"{metric_name:20s}: {abs(metric_value):.4f}")
