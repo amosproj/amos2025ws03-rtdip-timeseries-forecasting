@@ -18,28 +18,11 @@ from src.sdk.python.rtdip_sdk.pipelines.forecasting.spark.catboost_timeseries_re
 
 @pytest.fixture(scope="session")
 def spark():
-    import sys
-    import os
-
-    os.environ["PYSPARK_PYTHON"] = sys.executable
-    os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
-
-    existing_session = SparkSession.getActiveSession()
-    if existing_session:
-        existing_session.stop()
-
-    spark = (
+    return (
         SparkSession.builder.master("local[*]")
         .appName("CatBoost TimeSeries Unit Test")
-        .config("spark.executorEnv.PYSPARK_PYTHON", sys.executable)
-        .config("spark.executorEnv.PYSPARK_DRIVER_PYTHON", sys.executable)
-        .config("spark.pyspark.python", sys.executable)
-        .config("spark.pyspark.driver.python", sys.executable)
         .getOrCreate()
     )
-
-    yield spark
-    spark.stop()
 
 
 @pytest.fixture(scope="function")
