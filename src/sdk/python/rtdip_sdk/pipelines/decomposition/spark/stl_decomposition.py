@@ -23,35 +23,42 @@ from ..pandas.period_utils import calculate_period_from_frequency
 
 class STLDecomposition(DecompositionBaseInterface):
     """
-    Performs STL (Seasonal and Trend decomposition using Loess) on a PySpark DataFrame.
+    Decomposes a time series using STL (Seasonal and Trend decomposition using Loess).
 
-    STL is a robust method for decomposing time series into trend, seasonal, and residual components.
+    STL is a robust and flexible method for decomposing time series. It uses locally
+    weighted regression (LOESS) for smooth trend estimation and can handle outliers
+    through iterative weighting. The seasonal component is allowed to change over time.
+
+    This component takes a PySpark DataFrame as input and returns a PySpark DataFrame.
+    For Pandas DataFrames, use `rtdip_sdk.pipelines.decomposition.pandas.STLDecomposition` instead.
 
     Example
-    --------
+    -------
     ```python
-    from rtdip_sdk.pipelines.decomposition.spark.stl_decomposition import STLDecomposition
+    from rtdip_sdk.pipelines.decomposition.spark import STLDecomposition
     from pyspark.sql import SparkSession
 
     spark = SparkSession.builder.getOrCreate()
 
-    # Example 1: Single time series with explicit period
+    # Example 1: Single time series
     decomposer = STLDecomposition(
         df=spark_df,
         value_column='value',
         timestamp_column='timestamp',
-        period=7  # Explicit: 7 days
+        period=7,  # Explicit: 7 days
+        robust=True
     )
-    result = decomposer.decompose()
+    result_df = decomposer.decompose()
 
     # Or using period string (auto-calculated from sampling frequency)
     decomposer = STLDecomposition(
         df=spark_df,
         value_column='value',
         timestamp_column='timestamp',
-        period='weekly'  # Automatically calculated
+        period='weekly',  # Automatically calculated
+        robust=True
     )
-    result = decomposer.decompose()
+    result_df = decomposer.decompose()
 
     # Example 2: Multiple time series (grouped by sensor)
     decomposer_grouped = STLDecomposition(
@@ -59,31 +66,21 @@ class STLDecomposition(DecompositionBaseInterface):
         value_column='value',
         timestamp_column='timestamp',
         group_columns=['sensor'],
-        period='weekly',  # Period string
+        period=7,
         robust=True
     )
-    result_grouped = decomposer_grouped.decompose()
+    result_df_grouped = decomposer_grouped.decompose()
     ```
 
     Parameters:
-        df (PySparkDataFrame): PySpark DataFrame containing the time series data.
+        df (PySparkDataFrame): Input PySpark DataFrame containing the time series data.
         value_column (str): Name of the column containing the values to decompose.
-        timestamp_column (str): Name of the column containing timestamps. If None, assumes ordered data.
-        group_columns (List[str], optional): Columns defining separate time series groups (e.g., ['sensor_id']).
-            If provided, decomposition is performed separately for each group.
-            If None, the entire DataFrame is treated as a single time series.
-        period (Union[int, str]): Seasonal period. Can be:
-            - Integer: Explicit period value (e.g., 7 for weekly, 24 for daily in hourly data)
-            - String: Period name auto-calculated from sampling frequency
-              Supported: 'minutely', 'hourly', 'daily', 'weekly', 'monthly',
-              'quarterly', 'yearly'
-            Examples:
-            - 7 or 'weekly' for weekly patterns in daily data
-            - 24 or 'daily' for daily patterns in hourly data
-            - 720 or 'hourly' for hourly patterns in 5-second data
-        seasonal (int, optional): Length of the seasonal smoother. Must be odd.
-        trend (int, optional): Length of the trend smoother. Must be odd.
-        robust (bool): If True, use robust weights in the fitting procedure.
+        timestamp_column (optional str): Name of the column containing timestamps. If provided, will be used to set the index. If None, assumes index is already a DatetimeIndex.
+        group_columns (optional List[str]): Columns defining separate time series groups (e.g., ['sensor_id']). If provided, decomposition is performed separately for each group. If None, the entire DataFrame is treated as a single time series.
+        period (Union[int, str]): Seasonal period. Can be an integer (explicit period value, e.g., 7 for weekly) or a string ('minutely', 'hourly', 'daily', 'weekly', 'monthly', 'quarterly', 'yearly') auto-calculated from sampling frequency. Defaults to 7.
+        seasonal (optional int): Length of seasonal smoother (must be odd). If None, defaults to period + 1 if even, else period.
+        trend (optional int): Length of trend smoother (must be odd). If None, it is estimated from the data.
+        robust (optional bool): Whether to use robust weights for outlier handling. Defaults to False.
     """
 
     df: PySparkDataFrame

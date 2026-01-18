@@ -30,6 +30,9 @@ class STLDecomposition(PandasDecompositionBaseInterface):
     weighted regression (LOESS) for smooth trend estimation and can handle outliers
     through iterative weighting. The seasonal component is allowed to change over time.
 
+    This component takes a Pandas DataFrame as input and returns a Pandas DataFrame.
+    For PySpark DataFrames, use `rtdip_sdk.pipelines.decomposition.spark.STLDecomposition` instead.
+
     Example
     -------
     ```python
@@ -83,40 +86,15 @@ class STLDecomposition(PandasDecompositionBaseInterface):
     result_df_grouped = decomposer_grouped.decompose()
     ```
 
-    Parameters
-    ----------
-    df : PandasDataFrame
-        Input DataFrame containing the time series data
-    value_column : str
-        Name of the column containing the values to decompose
-    timestamp_column : str, optional
-        Name of the column containing timestamps. If provided, will be used
-        to set the index. If None, assumes index is already a DatetimeIndex.
-    group_columns : List[str], optional
-        Columns defining separate time series groups (e.g., ['sensor_id']).
-        If provided, decomposition is performed separately for each group.
-        If None, the entire DataFrame is treated as a single time series.
-    period : Union[int, str]
-        Seasonal period. Can be:
-        - Integer: Explicit period value (e.g., 7 for weekly, 24 for daily in hourly data)
-        - String: Period name auto-calculated from sampling frequency
-          Supported: 'minutely', 'hourly', 'daily', 'weekly', 'monthly',
-          'quarterly', 'yearly'
-        Examples:
-        - 7 or 'weekly' for weekly patterns in daily data
-        - 24 or 'daily' for daily patterns in hourly data
-        - 720 or 'hourly' for hourly patterns in 5-second data
-    seasonal : int, optional
-        Length of seasonal smoother (must be odd). If None, defaults to period + 1 if even, else period.
-    trend : int, optional
-        Length of trend smoother (must be odd). If None, it is estimated from the data.
-    robust : bool, default=False
-        Whether to use robust weights for outlier handling
-
-    Attributes
-    ----------
-    result_df : PandasDataFrame
-        DataFrame with original data plus decomposed components
+    Parameters:
+        df (PandasDataFrame): Input Pandas DataFrame containing the time series data.
+        value_column (str): Name of the column containing the values to decompose.
+        timestamp_column (optional str): Name of the column containing timestamps. If provided, will be used to set the index. If None, assumes index is already a DatetimeIndex.
+        group_columns (optional List[str]): Columns defining separate time series groups (e.g., ['sensor_id']). If provided, decomposition is performed separately for each group. If None, the entire DataFrame is treated as a single time series.
+        period (Union[int, str]): Seasonal period. Can be an integer (explicit period value, e.g., 7 for weekly) or a string ('minutely', 'hourly', 'daily', 'weekly', 'monthly', 'quarterly', 'yearly') auto-calculated from sampling frequency. Defaults to 7.
+        seasonal (optional int): Length of seasonal smoother (must be odd). If None, defaults to period + 1 if even, else period.
+        trend (optional int): Length of trend smoother (must be odd). If None, it is estimated from the data.
+        robust (optional bool): Whether to use robust weights for outlier handling. Defaults to False.
     """
 
     def __init__(

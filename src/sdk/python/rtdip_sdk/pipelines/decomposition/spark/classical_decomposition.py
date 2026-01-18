@@ -23,20 +23,25 @@ from ..pandas.period_utils import calculate_period_from_frequency
 
 class ClassicalDecomposition(DecompositionBaseInterface):
     """
-    Performs classical seasonal decomposition on a PySpark DataFrame.
+    Decomposes a time series using classical decomposition with moving averages.
 
-    Classical decomposition splits a time series into trend, seasonal, and residual components
-    using moving averages. Supports both additive and multiplicative models.
+    Classical decomposition is a straightforward method that uses moving averages
+    to extract the trend component. It supports both additive and multiplicative models.
+    Use additive when seasonal variations are roughly constant, and multiplicative
+    when seasonal variations change proportionally with the level of the series.
+
+    This component takes a PySpark DataFrame as input and returns a PySpark DataFrame.
+    For Pandas DataFrames, use `rtdip_sdk.pipelines.decomposition.pandas.ClassicalDecomposition` instead.
 
     Example
-    --------
+    -------
     ```python
-    from rtdip_sdk.pipelines.decomposition.spark.classical_decomposition import ClassicalDecomposition
+    from rtdip_sdk.pipelines.decomposition.spark import ClassicalDecomposition
     from pyspark.sql import SparkSession
 
     spark = SparkSession.builder.getOrCreate()
 
-    # Example 1: Single time series with explicit period
+    # Example 1: Single time series - Additive decomposition
     decomposer = ClassicalDecomposition(
         df=spark_df,
         value_column='value',
@@ -44,7 +49,7 @@ class ClassicalDecomposition(DecompositionBaseInterface):
         model='additive',
         period=7  # Explicit: 7 days
     )
-    result = decomposer.decompose()
+    result_df = decomposer.decompose()
 
     # Or using period string (auto-calculated from sampling frequency)
     decomposer = ClassicalDecomposition(
@@ -54,7 +59,7 @@ class ClassicalDecomposition(DecompositionBaseInterface):
         model='additive',
         period='weekly'  # Automatically calculated
     )
-    result = decomposer.decompose()
+    result_df = decomposer.decompose()
 
     # Example 2: Multiple time series (grouped by sensor)
     decomposer_grouped = ClassicalDecomposition(
@@ -63,30 +68,20 @@ class ClassicalDecomposition(DecompositionBaseInterface):
         timestamp_column='timestamp',
         group_columns=['sensor'],
         model='additive',
-        period='weekly'  # Period string
+        period=7
     )
-    result_grouped = decomposer_grouped.decompose()
+    result_df_grouped = decomposer_grouped.decompose()
     ```
 
     Parameters:
-        df (PySparkDataFrame): PySpark DataFrame containing the time series data.
+        df (PySparkDataFrame): Input PySpark DataFrame containing the time series data.
         value_column (str): Name of the column containing the values to decompose.
-        timestamp_column (str): Name of the column containing timestamps. If None, assumes ordered data.
-        group_columns (List[str], optional): Columns defining separate time series groups (e.g., ['sensor_id']).
-            If provided, decomposition is performed separately for each group.
-            If None, the entire DataFrame is treated as a single time series.
-        model (str): Type of seasonal component. Must be 'additive' or 'multiplicative'.
-        period (Union[int, str]): Seasonal period. Can be:
-            - Integer: Explicit period value (e.g., 7 for weekly, 24 for daily in hourly data)
-            - String: Period name auto-calculated from sampling frequency
-              Supported: 'minutely', 'hourly', 'daily', 'weekly', 'monthly',
-              'quarterly', 'yearly'
-            Examples:
-            - 7 or 'weekly' for weekly patterns in daily data
-            - 24 or 'daily' for daily patterns in hourly data
-            - 720 or 'hourly' for hourly patterns in 5-second data
-        two_sided (bool): If True, use a centered moving average for trend estimation.
-        extrapolate_trend (int or str): How many periods to extrapolate the trend at the boundaries.
+        timestamp_column (optional str): Name of the column containing timestamps. If provided, will be used to set the index. If None, assumes index is already a DatetimeIndex.
+        group_columns (optional List[str]): Columns defining separate time series groups (e.g., ['sensor_id']). If provided, decomposition is performed separately for each group. If None, the entire DataFrame is treated as a single time series.
+        model (str): Type of decomposition model. Must be 'additive' (Y_t = T_t + S_t + R_t, for constant seasonal variations) or 'multiplicative' (Y_t = T_t * S_t * R_t, for proportional seasonal variations). Defaults to 'additive'.
+        period (Union[int, str]): Seasonal period. Can be an integer (explicit period value, e.g., 7 for weekly) or a string ('minutely', 'hourly', 'daily', 'weekly', 'monthly', 'quarterly', 'yearly') auto-calculated from sampling frequency. Defaults to 7.
+        two_sided (optional bool): Whether to use centered moving averages. Defaults to True.
+        extrapolate_trend (optional int): How many observations to extrapolate the trend at the boundaries. Defaults to 0.
     """
 
     df: PySparkDataFrame

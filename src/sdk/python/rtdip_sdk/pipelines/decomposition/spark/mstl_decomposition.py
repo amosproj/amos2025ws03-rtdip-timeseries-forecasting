@@ -23,14 +23,20 @@ from ..pandas.period_utils import calculate_period_from_frequency
 
 class MSTLDecomposition(DecompositionBaseInterface):
     """
-    Performs MSTL (Multiple Seasonal-Trend decomposition using Loess) on a PySpark DataFrame.
+    Decomposes a time series with multiple seasonal patterns using MSTL.
 
-    MSTL extends STL to handle time series with multiple seasonal patterns (e.g., hourly and daily patterns).
+    MSTL (Multiple Seasonal-Trend decomposition using Loess) extends STL to handle
+    time series with multiple seasonal cycles. This is useful for high-frequency data
+    with multiple seasonality patterns (e.g., hourly data with daily + weekly patterns,
+    or daily data with weekly + yearly patterns).
+
+    This component takes a PySpark DataFrame as input and returns a PySpark DataFrame.
+    For Pandas DataFrames, use `rtdip_sdk.pipelines.decomposition.pandas.MSTLDecomposition` instead.
 
     Example
-    --------
+    -------
     ```python
-    from rtdip_sdk.pipelines.decomposition.spark.mstl_decomposition import MSTLDecomposition
+    from rtdip_sdk.pipelines.decomposition.spark import MSTLDecomposition
     from pyspark.sql import SparkSession
 
     spark = SparkSession.builder.getOrCreate()
@@ -40,18 +46,21 @@ class MSTLDecomposition(DecompositionBaseInterface):
         df=spark_df,
         value_column='value',
         timestamp_column='timestamp',
-        periods=[24, 168]  # Daily and weekly patterns (explicit)
+        periods=[24, 168],  # Daily and weekly seasonality
+        windows=[25, 169]   # Seasonal smoother lengths (must be odd)
     )
-    result = decomposer.decompose()
+    result_df = decomposer.decompose()
 
-    # Or using period strings (auto-calculated from sampling frequency)
+    # Result will have: trend, seasonal_24, seasonal_168, residual
+
+    # Alternatively, use period strings (auto-calculated from sampling frequency)
     decomposer = MSTLDecomposition(
         df=spark_df,
         value_column='value',
         timestamp_column='timestamp',
         periods=['daily', 'weekly']  # Automatically calculated
     )
-    result = decomposer.decompose()
+    result_df = decomposer.decompose()
 
     # Example 2: Multiple time series (grouped by sensor)
     decomposer_grouped = MSTLDecomposition(
@@ -59,30 +68,20 @@ class MSTLDecomposition(DecompositionBaseInterface):
         value_column='value',
         timestamp_column='timestamp',
         group_columns=['sensor'],
-        periods=['daily', 'weekly']  # Period strings
+        periods=['daily', 'weekly']
     )
-    result_grouped = decomposer_grouped.decompose()
+    result_df_grouped = decomposer_grouped.decompose()
     ```
 
     Parameters:
-        df (PySparkDataFrame): PySpark DataFrame containing the time series data.
+        df (PySparkDataFrame): Input PySpark DataFrame containing the time series data.
         value_column (str): Name of the column containing the values to decompose.
-        timestamp_column (str): Name of the column containing timestamps. If None, assumes ordered data.
-        group_columns (List[str], optional): Columns defining separate time series groups (e.g., ['sensor_id']).
-            If provided, decomposition is performed separately for each group.
-            If None, the entire DataFrame is treated as a single time series.
-        periods (Union[int, List[int], str, List[str]]): Seasonal period(s). Can be:
-            - Integer(s): Explicit period values (e.g., 7 for weekly, [24, 168])
-            - String(s): Period names that are auto-calculated from sampling frequency
-              Supported: 'minutely', 'hourly', 'daily', 'weekly', 'monthly',
-              'quarterly', 'yearly'
-            Examples:
-            - [24, 168] for daily+weekly in hourly data (explicit)
-            - ['hourly', 'daily'] for auto-calculated periods based on sampling
-            - ['daily', 'weekly'] for daily data with weekly+yearly patterns
-        windows (int or list, optional): Window sizes for seasonal smoothers. Must match length of periods if provided.
-        iterate (int): Number of iterations for the MSTL algorithm.
-        stl_kwargs (dict, optional): Additional keyword arguments to pass to the internal STL calls.
+        timestamp_column (optional str): Name of the column containing timestamps. If provided, will be used to set the index. If None, assumes index is already a DatetimeIndex.
+        group_columns (optional List[str]): Columns defining separate time series groups (e.g., ['sensor_id']). If provided, decomposition is performed separately for each group. If None, the entire DataFrame is treated as a single time series.
+        periods (Union[int, List[int], str, List[str]]): Seasonal period(s). Can be integer(s) (explicit period values, e.g., [24, 168]) or string(s) ('minutely', 'hourly', 'daily', 'weekly', 'monthly', 'quarterly', 'yearly') auto-calculated from sampling frequency.
+        windows (optional Union[int, List[int]]): Length(s) of seasonal smoother(s). Must be odd. If None, defaults based on periods. Should have same length as periods if provided as list.
+        iterate (optional int): Number of iterations for MSTL algorithm. Defaults to 2.
+        stl_kwargs (optional dict): Additional keyword arguments to pass to the underlying STL decomposition.
     """
 
     df: PySparkDataFrame

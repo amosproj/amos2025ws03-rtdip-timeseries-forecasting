@@ -31,6 +31,9 @@ class ClassicalDecomposition(PandasDecompositionBaseInterface):
     Use additive when seasonal variations are roughly constant, and multiplicative
     when seasonal variations change proportionally with the level of the series.
 
+    This component takes a Pandas DataFrame as input and returns a Pandas DataFrame.
+    For PySpark DataFrames, use `rtdip_sdk.pipelines.decomposition.spark.ClassicalDecomposition` instead.
+
     Example
     -------
     ```python
@@ -84,42 +87,15 @@ class ClassicalDecomposition(PandasDecompositionBaseInterface):
     result_df_grouped = decomposer_grouped.decompose()
     ```
 
-    Parameters
-    ----------
-    df : PandasDataFrame
-        Input DataFrame containing the time series data
-    value_column : str
-        Name of the column containing the values to decompose
-    timestamp_column : str, optional
-        Name of the column containing timestamps. If provided, will be used
-        to set the index. If None, assumes index is already a DatetimeIndex.
-    group_columns : List[str], optional
-        Columns defining separate time series groups (e.g., ['sensor_id']).
-        If provided, decomposition is performed separately for each group.
-        If None, the entire DataFrame is treated as a single time series.
-    model : {'additive', 'multiplicative'}
-        Type of decomposition model:
-        - 'additive': Y_t = T_t + S_t + R_t (for constant seasonal variations)
-        - 'multiplicative': Y_t = T_t * S_t * R_t (for proportional seasonal variations)
-    period : Union[int, str]
-        Seasonal period. Can be:
-        - Integer: Explicit period value (e.g., 7 for weekly, 24 for daily in hourly data)
-        - String: Period name auto-calculated from sampling frequency
-          Supported: 'minutely', 'hourly', 'daily', 'weekly', 'monthly',
-          'quarterly', 'yearly'
-        Examples:
-        - 7 or 'weekly' for weekly patterns in daily data
-        - 24 or 'daily' for daily patterns in hourly data
-        - 720 or 'hourly' for hourly patterns in 5-second data
-    two_sided : bool, default=True
-        Whether to use centered moving averages
-    extrapolate_trend : int or 'freq', default=0
-        How many observations to extrapolate the trend at the boundaries
-
-    Attributes
-    ----------
-    result_df : PandasDataFrame
-        DataFrame with original data plus decomposed components
+    Parameters:
+        df (PandasDataFrame): Input Pandas DataFrame containing the time series data.
+        value_column (str): Name of the column containing the values to decompose.
+        timestamp_column (optional str): Name of the column containing timestamps. If provided, will be used to set the index. If None, assumes index is already a DatetimeIndex.
+        group_columns (optional List[str]): Columns defining separate time series groups (e.g., ['sensor_id']). If provided, decomposition is performed separately for each group. If None, the entire DataFrame is treated as a single time series.
+        model (str): Type of decomposition model. Must be 'additive' (Y_t = T_t + S_t + R_t, for constant seasonal variations) or 'multiplicative' (Y_t = T_t * S_t * R_t, for proportional seasonal variations). Defaults to 'additive'.
+        period (Union[int, str]): Seasonal period. Can be an integer (explicit period value, e.g., 7 for weekly) or a string ('minutely', 'hourly', 'daily', 'weekly', 'monthly', 'quarterly', 'yearly') auto-calculated from sampling frequency. Defaults to 7.
+        two_sided (optional bool): Whether to use centered moving averages. Defaults to True.
+        extrapolate_trend (optional int): How many observations to extrapolate the trend at the boundaries. Defaults to 0.
     """
 
     def __init__(
