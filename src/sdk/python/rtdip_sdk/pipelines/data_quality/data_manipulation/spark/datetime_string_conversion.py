@@ -20,16 +20,15 @@ from ..interfaces import DataManipulationBaseInterface
 from ...._pipeline_utils.models import Libraries, SystemType
 
 
-# Default Spark datetime formats to try when parsing
 DEFAULT_FORMATS = [
-    "yyyy-MM-dd HH:mm:ss.SSSSSS",  # With microseconds
-    "yyyy-MM-dd HH:mm:ss.SSS",  # With milliseconds
-    "yyyy-MM-dd HH:mm:ss",  # Without fractional seconds
-    "yyyy/MM/dd HH:mm:ss",  # Slash separator
-    "dd-MM-yyyy HH:mm:ss",  # DD-MM-YYYY format
-    "yyyy-MM-dd'T'HH:mm:ss",  # ISO format without fractional
-    "yyyy-MM-dd'T'HH:mm:ss.SSS",  # ISO format with milliseconds
-    "yyyy-MM-dd'T'HH:mm:ss.SSSSSS",  # ISO format with microseconds
+    "yyyy-MM-dd'T'HH:mm:ss.SSSSSS",
+    "yyyy-MM-dd'T'HH:mm:ss.SSS",
+    "yyyy-MM-dd'T'HH:mm:ss",
+    "yyyy-MM-dd HH:mm:ss.SSSSSS",
+    "yyyy-MM-dd HH:mm:ss.SSS",
+    "yyyy-MM-dd HH:mm:ss",
+    "yyyy/MM/dd HH:mm:ss",
+    "dd-MM-yyyy HH:mm:ss",
 ]
 
 
