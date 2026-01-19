@@ -130,8 +130,8 @@ FONT_SIZES: Dict[str, int] = {
 }
 
 LINE_SETTINGS: Dict[str, float] = {
-    "linewidth": 2.0,  # Default line width
-    "linewidth_thin": 1.5,  # Thin lines (for CI, grids)
+    "linewidth": 1.0,  # Default line width
+    "linewidth_thin": 0.75,  # Thin lines (for CI, grids)
     "marker_size": 4,  # Default marker size for line plots
     "scatter_size": 80,  # Scatter plot marker size
     "anomaly_size": 100,  # Anomaly marker size
