@@ -15,34 +15,8 @@ from src.sdk.python.rtdip_sdk.pipelines.forecasting.spark.xgboost_timeseries imp
 )
 
 
-@pytest.fixture(scope="session")
-def spark():
-    import sys
-    import os
-
-    os.environ["PYSPARK_PYTHON"] = sys.executable
-    os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
-
-    existing_session = SparkSession.getActiveSession()
-    if existing_session:
-        existing_session.stop()
-
-    spark = (
-        SparkSession.builder.master("local[*]")
-        .appName("XGBoost TimeSeries Unit Test")
-        .config("spark.executorEnv.PYSPARK_PYTHON", sys.executable)
-        .config("spark.executorEnv.PYSPARK_DRIVER_PYTHON", sys.executable)
-        .config("spark.pyspark.python", sys.executable)
-        .config("spark.pyspark.driver.python", sys.executable)
-        .getOrCreate()
-    )
-
-    yield spark
-    spark.stop()
-
-
 @pytest.fixture(scope="function")
-def sample_timeseries_data(spark):
+def sample_timeseries_data(spark_session):
     """
     Creates sample time series data with multiple items for testing.
     Needs more data points than AutoGluon due to lag feature requirements.
@@ -65,11 +39,11 @@ def sample_timeseries_data(spark):
         ]
     )
 
-    return spark.createDataFrame(data, schema=schema)
+    return spark_session.createDataFrame(data, schema=schema)
 
 
 @pytest.fixture(scope="function")
-def simple_timeseries_data(spark):
+def simple_timeseries_data(spark_session):
     """
     Creates simple time series data for basic testing.
     Must have enough points for lag features (default max lag is 48).
@@ -91,7 +65,7 @@ def simple_timeseries_data(spark):
         ]
     )
 
-    return spark.createDataFrame(data, schema=schema)
+    return spark_session.createDataFrame(data, schema=schema)
 
 
 def test_xgboost_initialization():
@@ -203,7 +177,7 @@ def test_evaluate_without_training(simple_timeseries_data):
         xgb.evaluate(simple_timeseries_data)
 
 
-def test_train_and_predict(sample_timeseries_data):
+def test_train_and_predict(sample_timeseries_data, spark_session):
     """
     Test training and prediction workflow.
     """
@@ -231,9 +205,8 @@ def test_train_and_predict(sample_timeseries_data):
     train_df = pd.concat(train_dfs, ignore_index=True)
     test_df = pd.concat(test_dfs, ignore_index=True)
 
-    spark = SparkSession.builder.getOrCreate()
-    train_spark = spark.createDataFrame(train_df)
-    test_spark = spark.createDataFrame(test_df)
+    train_spark = spark_session.createDataFrame(train_df)
+    test_spark = spark_session.createDataFrame(test_df)
 
     xgb.train(train_spark)
     assert xgb.model is not None
@@ -279,7 +252,7 @@ def test_train_and_evaluate(sample_timeseries_data):
         assert True
 
 
-def test_recursive_forecasting(simple_timeseries_data):
+def test_recursive_forecasting(simple_timeseries_data, spark_session):
     """
     Test that recursive forecasting generates the expected number of predictions.
     """
@@ -294,12 +267,11 @@ def test_recursive_forecasting(simple_timeseries_data):
     df = simple_timeseries_data.toPandas()
     train_df = df.iloc[:-30]
 
-    spark = SparkSession.builder.getOrCreate()
-    train_spark = spark.createDataFrame(train_df)
+    train_spark = spark_session.createDataFrame(train_df)
 
     xgb.train(train_spark)
 
-    test_spark = spark.createDataFrame(train_df.tail(50))
+    test_spark = spark_session.createDataFrame(train_df.tail(50))
     predictions = xgb.predict(test_spark)
 
     pred_df = predictions.toPandas()
@@ -418,12 +390,10 @@ def test_settings():
     assert isinstance(settings, dict)
 
 
-def test_insufficient_data():
+def test_insufficient_data(spark_session):
     """
     Test that training with insufficient data (less than max lag) handles gracefully.
     """
-    spark = SparkSession.builder.getOrCreate()
-
     data = []
     base_date = datetime(2024, 1, 1)
     for i in range(30):
@@ -437,7 +407,7 @@ def test_insufficient_data():
         ]
     )
 
-    minimal_data = spark.createDataFrame(data, schema=schema)
+    minimal_data = spark_session.createDataFrame(data, schema=schema)
 
     xgb = XGBoostTimeSeries(
         prediction_length=5,
@@ -458,12 +428,10 @@ def test_insufficient_data():
         )
 
 
-def test_time_features_extraction():
+def test_time_features_extraction(spark_session):
     """
     Test that time-based features are correctly extracted.
     """
-    spark = SparkSession.builder.getOrCreate()
-
     # Create data with specific timestamps
     data = []
     # Monday, January 1, 2024, 14:00 (hour=14, day_of_week=0, day_of_month=1, month=1)
@@ -479,7 +447,7 @@ def test_time_features_extraction():
         ]
     )
 
-    test_data = spark.createDataFrame(data, schema=schema)
+    test_data = spark_session.createDataFrame(data, schema=schema)
     df = test_data.toPandas()
 
     xgb = XGBoostTimeSeries()
@@ -493,7 +461,7 @@ def test_time_features_extraction():
     assert first_row["month"] == 1
 
 
-def test_sensor_encoding():
+def test_sensor_encoding(spark_session):
     """
     Test that sensor IDs are properly encoded.
     """
@@ -502,8 +470,6 @@ def test_sensor_encoding():
         max_depth=3,
         n_estimators=50,
     )
-
-    spark = SparkSession.builder.getOrCreate()
 
     data = []
     base_date = datetime(2024, 1, 1)
@@ -519,7 +485,7 @@ def test_sensor_encoding():
         ]
     )
 
-    multi_sensor_data = spark.createDataFrame(data, schema=schema)
+    multi_sensor_data = spark_session.createDataFrame(data, schema=schema)
     xgb.train(multi_sensor_data)
 
     assert len(xgb.label_encoder.classes_) == 3

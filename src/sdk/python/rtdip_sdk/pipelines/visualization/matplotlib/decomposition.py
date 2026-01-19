@@ -107,12 +107,16 @@ def _extract_period_from_column(col_name: str) -> Optional[int]:
     return None
 
 
-def _get_period_label(period: Optional[int]) -> str:
+def _get_period_label(
+    period: Optional[int], custom_labels: Optional[Dict[int, str]] = None
+) -> str:
     """
     Get human-readable label for a period value.
 
     Args:
         period: Period value (e.g., 24, 168, 1440)
+        custom_labels: Optional dictionary mapping period values to custom labels.
+            Takes precedence over built-in labels.
 
     Returns:
         Human-readable label (e.g., "Daily", "Weekly")
@@ -120,7 +124,11 @@ def _get_period_label(period: Optional[int]) -> str:
     if period is None:
         return "Seasonal"
 
-    period_labels = {
+    # Check custom labels first
+    if custom_labels and period in custom_labels:
+        return custom_labels[period]
+
+    default_labels = {
         24: "Daily (24h)",
         168: "Weekly (168h)",
         8760: "Yearly",
@@ -131,7 +139,7 @@ def _get_period_label(period: Optional[int]) -> str:
         366: "Yearly (366d)",
     }
 
-    return period_labels.get(period, f"Period {period}")
+    return default_labels.get(period, f"Period {period}")
 
 
 class DecompositionPlot(MatplotlibVisualizationInterface):
@@ -149,7 +157,8 @@ class DecompositionPlot(MatplotlibVisualizationInterface):
     plot = DecompositionPlot(
         decomposition_data=result_df,
         sensor_id="SENSOR_001",
-        title="STL Decomposition Results"
+        title="STL Decomposition Results",
+        period_labels={144: "Day", 1008: "Week"}  # Custom period names
     )
     fig = plot.plot()
     plot.save("decomposition.png")
@@ -164,6 +173,8 @@ class DecompositionPlot(MatplotlibVisualizationInterface):
         title: Optional custom plot title.
         show_legend: Whether to show legends on each panel (default: True).
         column_mapping: Optional mapping from user column names to expected names.
+        period_labels: Optional mapping from period values to custom display names.
+            Example: {144: "Day", 1008: "Week"} maps period 144 to "Day".
     """
 
     decomposition_data: PandasDataFrame
@@ -171,6 +182,7 @@ class DecompositionPlot(MatplotlibVisualizationInterface):
     title: Optional[str]
     show_legend: bool
     column_mapping: Optional[Dict[str, str]]
+    period_labels: Optional[Dict[int, str]]
     timestamp_column: str
     value_column: str
     _fig: Optional[plt.Figure]
@@ -184,11 +196,13 @@ class DecompositionPlot(MatplotlibVisualizationInterface):
         title: Optional[str] = None,
         show_legend: bool = True,
         column_mapping: Optional[Dict[str, str]] = None,
+        period_labels: Optional[Dict[int, str]] = None,
     ) -> None:
         self.sensor_id = sensor_id
         self.title = title
         self.show_legend = show_legend
         self.column_mapping = column_mapping
+        self.period_labels = period_labels
         self.timestamp_column = "timestamp"
         self.value_column = "value"
         self._fig = None
@@ -280,7 +294,7 @@ class DecompositionPlot(MatplotlibVisualizationInterface):
         for idx, seasonal_col in enumerate(self._seasonal_columns):
             period = _extract_period_from_column(seasonal_col)
             color = config.get_seasonal_color(period, idx) if period else config.DECOMPOSITION_COLORS["seasonal"]
-            label = _get_period_label(period)
+            label = _get_period_label(period, self.period_labels)
 
             self._axes[panel_idx].plot(
                 timestamps,
@@ -374,7 +388,8 @@ class MSTLDecompositionPlot(MatplotlibVisualizationInterface):
     plot = MSTLDecompositionPlot(
         decomposition_data=mstl_result,
         sensor_id="SENSOR_001",
-        zoom_periods={"seasonal_24": 168}  # Show 1 week of daily pattern
+        zoom_periods={"seasonal_24": 168},  # Show 1 week of daily pattern
+        period_labels={144: "Day", 1008: "Week"}  # Custom period names
     )
     fig = plot.plot()
     plot.save("mstl_decomposition.png")
@@ -391,6 +406,8 @@ class MSTLDecompositionPlot(MatplotlibVisualizationInterface):
             to display (e.g., {"seasonal_24": 168} shows 1 week of daily pattern).
         show_legend: Whether to show legends (default: True).
         column_mapping: Optional column name mapping.
+        period_labels: Optional mapping from period values to custom display names.
+            Example: {144: "Day", 1008: "Week"} maps period 144 to "Day".
     """
 
     decomposition_data: PandasDataFrame
@@ -401,6 +418,7 @@ class MSTLDecompositionPlot(MatplotlibVisualizationInterface):
     zoom_periods: Optional[Dict[str, int]]
     show_legend: bool
     column_mapping: Optional[Dict[str, str]]
+    period_labels: Optional[Dict[int, str]]
     _fig: Optional[plt.Figure]
     _axes: Optional[np.ndarray]
     _seasonal_columns: List[str]
@@ -415,6 +433,7 @@ class MSTLDecompositionPlot(MatplotlibVisualizationInterface):
         zoom_periods: Optional[Dict[str, int]] = None,
         show_legend: bool = True,
         column_mapping: Optional[Dict[str, str]] = None,
+        period_labels: Optional[Dict[int, str]] = None,
     ) -> None:
         self.timestamp_column = timestamp_column
         self.value_column = value_column
@@ -423,6 +442,7 @@ class MSTLDecompositionPlot(MatplotlibVisualizationInterface):
         self.zoom_periods = zoom_periods or {}
         self.show_legend = show_legend
         self.column_mapping = column_mapping
+        self.period_labels = period_labels
         self._fig = None
         self._axes = None
 
@@ -512,7 +532,7 @@ class MSTLDecompositionPlot(MatplotlibVisualizationInterface):
         for idx, seasonal_col in enumerate(self._seasonal_columns):
             period = _extract_period_from_column(seasonal_col)
             color = config.get_seasonal_color(period, idx) if period else config.DECOMPOSITION_COLORS["seasonal"]
-            label = _get_period_label(period)
+            label = _get_period_label(period, self.period_labels)
 
             zoom_n = self.zoom_periods.get(seasonal_col)
             if zoom_n and zoom_n < len(self.decomposition_data):
@@ -616,7 +636,8 @@ class DecompositionDashboard(MatplotlibVisualizationInterface):
 
     dashboard = DecompositionDashboard(
         decomposition_data=result_df,
-        sensor_id="SENSOR_001"
+        sensor_id="SENSOR_001",
+        period_labels={144: "Day", 1008: "Week"}  # Custom period names
     )
     fig = dashboard.plot()
     dashboard.save("decomposition_dashboard.png")
@@ -630,6 +651,8 @@ class DecompositionDashboard(MatplotlibVisualizationInterface):
         title: Optional custom title.
         show_statistics: Whether to show statistics panel (default: True).
         column_mapping: Optional column name mapping.
+        period_labels: Optional mapping from period values to custom display names.
+            Example: {144: "Day", 1008: "Week"} maps period 144 to "Day".
     """
 
     decomposition_data: PandasDataFrame
@@ -639,6 +662,7 @@ class DecompositionDashboard(MatplotlibVisualizationInterface):
     title: Optional[str]
     show_statistics: bool
     column_mapping: Optional[Dict[str, str]]
+    period_labels: Optional[Dict[int, str]]
     _fig: Optional[plt.Figure]
     _seasonal_columns: List[str]
     _statistics: Optional[Dict[str, Any]]
@@ -652,6 +676,7 @@ class DecompositionDashboard(MatplotlibVisualizationInterface):
         title: Optional[str] = None,
         show_statistics: bool = True,
         column_mapping: Optional[Dict[str, str]] = None,
+        period_labels: Optional[Dict[int, str]] = None,
     ) -> None:
         self.timestamp_column = timestamp_column
         self.value_column = value_column
@@ -659,6 +684,7 @@ class DecompositionDashboard(MatplotlibVisualizationInterface):
         self.title = title
         self.show_statistics = show_statistics
         self.column_mapping = column_mapping
+        self.period_labels = period_labels
         self._fig = None
         self._statistics = None
 
@@ -805,7 +831,7 @@ class DecompositionDashboard(MatplotlibVisualizationInterface):
         for idx, col in enumerate(self._seasonal_columns):
             period = _extract_period_from_column(col)
             color = config.get_seasonal_color(period, idx) if period else config.DECOMPOSITION_COLORS["seasonal"]
-            label = _get_period_label(period)
+            label = _get_period_label(period, self.period_labels)
             strength = self._statistics["seasonality_strength"].get(col, 0)
 
             ax_seasonal.plot(
@@ -860,7 +886,7 @@ class DecompositionDashboard(MatplotlibVisualizationInterface):
 
             for col in self._seasonal_columns:
                 period = _extract_period_from_column(col)
-                label = _get_period_label(period) if period else "Seasonal"
+                label = _get_period_label(period, self.period_labels) if period else "Seasonal"
                 var_pct = self._statistics["variance_explained"].get(col, 0)
                 strength = self._statistics["seasonality_strength"].get(col, 0)
                 table_data.append([label, f"{var_pct:.1f}%", f"{strength:.3f}"])
@@ -969,7 +995,8 @@ class MultiSensorDecompositionPlot(MatplotlibVisualizationInterface):
 
     plot = MultiSensorDecompositionPlot(
         decomposition_dict=decomposition_dict,
-        max_sensors=9
+        max_sensors=9,
+        period_labels={144: "Day", 1008: "Week"}  # Custom period names
     )
     fig = plot.plot()
     plot.save("multi_sensor_decomposition.png")
@@ -983,6 +1010,8 @@ class MultiSensorDecompositionPlot(MatplotlibVisualizationInterface):
         compact: If True, show overlay of components; if False, show stacked (default: True).
         title: Optional main title.
         column_mapping: Optional column name mapping.
+        period_labels: Optional mapping from period values to custom display names.
+            Example: {144: "Day", 1008: "Week"} maps period 144 to "Day".
     """
 
     decomposition_dict: Dict[str, PandasDataFrame]
@@ -992,6 +1021,7 @@ class MultiSensorDecompositionPlot(MatplotlibVisualizationInterface):
     compact: bool
     title: Optional[str]
     column_mapping: Optional[Dict[str, str]]
+    period_labels: Optional[Dict[int, str]]
     _fig: Optional[plt.Figure]
 
     def __init__(
@@ -1003,6 +1033,7 @@ class MultiSensorDecompositionPlot(MatplotlibVisualizationInterface):
         compact: bool = True,
         title: Optional[str] = None,
         column_mapping: Optional[Dict[str, str]] = None,
+        period_labels: Optional[Dict[int, str]] = None,
     ) -> None:
         self.decomposition_dict = decomposition_dict
         self.timestamp_column = timestamp_column
@@ -1011,6 +1042,7 @@ class MultiSensorDecompositionPlot(MatplotlibVisualizationInterface):
         self.compact = compact
         self.title = title
         self.column_mapping = column_mapping
+        self.period_labels = period_labels
         self._fig = None
 
         if not decomposition_dict:
@@ -1098,7 +1130,7 @@ class MultiSensorDecompositionPlot(MatplotlibVisualizationInterface):
                 for s_idx, col in enumerate(seasonal_cols):
                     period = _extract_period_from_column(col)
                     color = config.get_seasonal_color(period, s_idx) if period else config.DECOMPOSITION_COLORS["seasonal"]
-                    label = _get_period_label(period)
+                    label = _get_period_label(period, self.period_labels)
 
                     trend_plus_seasonal = df["trend"] + df[col]
                     ax.plot(

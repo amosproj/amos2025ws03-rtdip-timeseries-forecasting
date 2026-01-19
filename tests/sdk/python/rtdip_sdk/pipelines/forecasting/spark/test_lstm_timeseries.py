@@ -15,33 +15,12 @@ from src.sdk.python.rtdip_sdk.pipelines.forecasting.spark.lstm_timeseries import
 )
 
 
-@pytest.fixture(scope="session")
-def spark():
-    import sys
-    import os
-
-    os.environ["PYSPARK_PYTHON"] = sys.executable
-    os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
-    existing_session = SparkSession.getActiveSession()
-    if existing_session:
-        existing_session.stop()
-
-    spark = (
-        SparkSession.builder.master("local[*]")
-        .appName("LSTM TimeSeries Unit Test")
-        .config("spark.executorEnv.PYSPARK_PYTHON", sys.executable)
-        .config("spark.executorEnv.PYSPARK_DRIVER_PYTHON", sys.executable)
-        .config("spark.pyspark.python", sys.executable)
-        .config("spark.pyspark.driver.python", sys.executable)
-        .getOrCreate()
-    )
-
-    yield spark
-    spark.stop()
+# Note: Uses spark_session fixture from tests/conftest.py
+# Do NOT define a local spark fixture - it causes session conflicts with other tests
 
 
 @pytest.fixture(scope="function")
-def sample_timeseries_data(spark):
+def sample_timeseries_data(spark_session):
     """
     Creates sample time series data with multiple items for testing.
     Needs more data points than AutoGluon due to lookback window requirements.
@@ -63,11 +42,11 @@ def sample_timeseries_data(spark):
         ]
     )
 
-    return spark.createDataFrame(data, schema=schema)
+    return spark_session.createDataFrame(data, schema=schema)
 
 
 @pytest.fixture(scope="function")
-def simple_timeseries_data(spark):
+def simple_timeseries_data(spark_session):
     """
     Creates simple time series data for basic testing.
     Must have enough points for lookback window (default 24).
@@ -88,7 +67,7 @@ def simple_timeseries_data(spark):
         ]
     )
 
-    return spark.createDataFrame(data, schema=schema)
+    return spark_session.createDataFrame(data, schema=schema)
 
 
 def test_lstm_initialization():
@@ -196,7 +175,7 @@ def test_evaluate_without_training(simple_timeseries_data):
     assert result is None
 
 
-def test_train_and_predict(sample_timeseries_data):
+def test_train_and_predict(sample_timeseries_data, spark_session):
     """
     Test training and prediction workflow.
     """
@@ -219,9 +198,8 @@ def test_train_and_predict(sample_timeseries_data):
     test_df = df.iloc[train_size:]
 
     # Convert back to Spark
-    spark = SparkSession.builder.getOrCreate()
-    train_spark = spark.createDataFrame(train_df)
-    test_spark = spark.createDataFrame(test_df)
+    train_spark = spark_session.createDataFrame(train_df)
+    test_spark = spark_session.createDataFrame(test_df)
 
     # Train
     lstm.train(train_spark)
@@ -239,7 +217,7 @@ def test_train_and_predict(sample_timeseries_data):
     assert "mean" in pred_df.columns
 
 
-def test_train_and_evaluate(sample_timeseries_data):
+def test_train_and_evaluate(sample_timeseries_data, spark_session):
     """
     Test training and evaluation workflow.
     """
@@ -269,9 +247,8 @@ def test_train_and_evaluate(sample_timeseries_data):
     train_df = pd.concat(train_dfs, ignore_index=True)
     test_df = pd.concat(test_dfs, ignore_index=True)
 
-    spark = SparkSession.builder.getOrCreate()
-    train_spark = spark.createDataFrame(train_df)
-    test_spark = spark.createDataFrame(test_df)
+    train_spark = spark_session.createDataFrame(train_df)
+    test_spark = spark_session.createDataFrame(test_df)
 
     # Train
     lstm.train(train_spark)
@@ -397,12 +374,10 @@ def test_settings():
     assert isinstance(settings, dict)
 
 
-def test_insufficient_data():
+def test_insufficient_data(spark_session):
     """
     Test that training with insufficient data (less than lookback window) handles gracefully.
     """
-    spark = SparkSession.builder.getOrCreate()
-
     data = []
     base_date = datetime(2024, 1, 1)
     for i in range(10):
@@ -416,7 +391,7 @@ def test_insufficient_data():
         ]
     )
 
-    minimal_data = spark.createDataFrame(data, schema=schema)
+    minimal_data = spark_session.createDataFrame(data, schema=schema)
 
     lstm = LSTMTimeSeries(
         lookback_window=24,
