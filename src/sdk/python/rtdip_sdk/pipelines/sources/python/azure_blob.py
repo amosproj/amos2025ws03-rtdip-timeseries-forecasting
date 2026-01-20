@@ -35,8 +35,8 @@ class PythonAzureBlobSource(SourceInterface):
 
         azure_blob_source = PythonAzureBlobSource(
             account_url="https://{ACCOUNT-NAME}.blob.core.windows.net",
-            container_name="rtimedata",
-            credential="?sv=2020-10-02&ss=btqf...",  # SAS token
+            container_name="{CONTAINER-NAME}",
+            credential="{SAS-TOKEN}",
             file_pattern="*.parquet",
             combine_blobs=True
         )
@@ -51,7 +51,7 @@ class PythonAzureBlobSource(SourceInterface):
 
         azure_blob_source = PythonAzureBlobSource(
             account_url="https://{ACCOUNT-NAME}.blob.core.windows.net",
-            container_name="rtimedata",
+            container_name="{CONTAINER-NAME}",
             credential="{ACCOUNT-KEY}",
             file_pattern="*.parquet",
             combine_blobs=True
@@ -67,7 +67,7 @@ class PythonAzureBlobSource(SourceInterface):
 
         azure_blob_source = PythonAzureBlobSource(
             account_url="https://{ACCOUNT-NAME}.blob.core.windows.net",
-            container_name="rtimedata",
+            container_name="{CONTAINER-NAME}",
             credential="{SAS-TOKEN-OR-KEY}",
             blob_names=["data_2024_01.parquet", "data_2024_02.parquet"],
             combine_blobs=True
@@ -79,7 +79,7 @@ class PythonAzureBlobSource(SourceInterface):
     Parameters:
         account_url (str): Azure Storage account URL (e.g., "https://{account-name}.blob.core.windows.net")
         container_name (str): Name of the blob container
-        credential (str): SAS token (with leading '?') or account key for authentication
+        credential (str): SAS token or account key for authentication
         blob_names (optional List[str]): List of specific blob names to read. If provided, file_pattern is ignored
         file_pattern (optional str): Pattern to match blob names (e.g., "*.parquet", "data/*.parquet"). Defaults to "*.parquet"
         combine_blobs (optional bool): If True, combines all matching blobs into a single LazyFrame. If False, returns list of LazyFrames. Defaults to True
@@ -88,7 +88,6 @@ class PythonAzureBlobSource(SourceInterface):
     !!! note "Note"
         - Requires `azure-storage-blob` package
         - Currently only supports parquet files
-        - SAS token should include the leading '?' character
         - When combine_blobs=False, returns a list of LazyFrames instead of a single LazyFrame
     """
 

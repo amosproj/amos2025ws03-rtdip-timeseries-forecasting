@@ -31,6 +31,9 @@ class MSTLDecomposition(PandasDecompositionBaseInterface):
     with multiple seasonality patterns (e.g., hourly data with daily + weekly patterns,
     or daily data with weekly + yearly patterns).
 
+    This component takes a Pandas DataFrame as input and returns a Pandas DataFrame.
+    For PySpark DataFrames, use `rtdip_sdk.pipelines.decomposition.spark.MSTLDecomposition` instead.
+
     Example
     -------
     ```python
@@ -75,41 +78,15 @@ class MSTLDecomposition(PandasDecompositionBaseInterface):
     result_df = decomposer.decompose()
     ```
 
-    Parameters
-    ----------
-    df : PandasDataFrame
-        Input DataFrame containing the time series data
-    value_column : str
-        Name of the column containing the values to decompose
-    timestamp_column : str, optional
-        Name of the column containing timestamps. If provided, will be used
-        to set the index. If None, assumes index is already a DatetimeIndex.
-    group_columns : List[str], optional
-        Columns defining separate time series groups (e.g., ['sensor_id']).
-        If provided, decomposition is performed separately for each group.
-        If None, the entire DataFrame is treated as a single time series.
-    periods : Union[int, List[int], str, List[str]]
-        Seasonal period(s). Can be:
-        - Integer(s): Explicit period values (e.g., 7 for weekly, [24, 168])
-        - String(s): Period names that are auto-calculated from sampling frequency
-          Supported: 'minutely', 'hourly', 'daily', 'weekly', 'monthly',
-          'quarterly', 'yearly'
-        Examples:
-        - [24, 168] for daily+weekly in hourly data (explicit)
-        - ['hourly', 'daily'] for auto-calculated periods based on sampling
-        - ['daily', 'weekly'] for daily data with weekly+yearly patterns
-    windows : Union[int, List[int]], optional
-        Length(s) of seasonal smoother(s). Must be odd. If None, defaults based on periods.
-        Should have same length as periods if provided as list.
-    iterate : int, default=2
-        Number of iterations for MSTL algorithm
-    stl_kwargs : dict, optional
-        Additional keyword arguments to pass to the underlying STL decomposition
-
-    Attributes
-    ----------
-    result_df : PandasDataFrame
-        DataFrame with original data plus decomposed components
+    Parameters:
+        df (PandasDataFrame): Input Pandas DataFrame containing the time series data.
+        value_column (str): Name of the column containing the values to decompose.
+        timestamp_column (optional str): Name of the column containing timestamps. If provided, will be used to set the index. If None, assumes index is already a DatetimeIndex.
+        group_columns (optional List[str]): Columns defining separate time series groups (e.g., ['sensor_id']). If provided, decomposition is performed separately for each group. If None, the entire DataFrame is treated as a single time series.
+        periods (Union[int, List[int], str, List[str]]): Seasonal period(s). Can be integer(s) (explicit period values, e.g., [24, 168]) or string(s) ('minutely', 'hourly', 'daily', 'weekly', 'monthly', 'quarterly', 'yearly') auto-calculated from sampling frequency.
+        windows (optional Union[int, List[int]]): Length(s) of seasonal smoother(s). Must be odd. If None, defaults based on periods. Should have same length as periods if provided as list.
+        iterate (optional int): Number of iterations for MSTL algorithm. Defaults to 2.
+        stl_kwargs (optional dict): Additional keyword arguments to pass to the underlying STL decomposition.
     """
 
     def __init__(
