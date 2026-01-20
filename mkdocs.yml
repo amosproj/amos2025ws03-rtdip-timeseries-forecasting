@@ -256,9 +256,13 @@ nav:
                           - Interval Filtering: sdk/code-reference/pipelines/data_quality/data_manipulation/spark/interval_filtering.md
                           - K-Sigma Anomaly Detection: sdk/code-reference/pipelines/data_quality/data_manipulation/spark/k_sigma_anomaly_detection.md
                           - Missing Value Imputation: sdk/code-reference/pipelines/data_quality/data_manipulation/spark/missing_value_imputation.md
+                          - Chronological Sort: sdk/code-reference/pipelines/data_quality/data_manipulation/spark/chronological_sort.md
                           - Cyclical Encoding: sdk/code-reference/pipelines/data_quality/data_manipulation/spark/cyclical_encoding.md
                           - Datetime Features: sdk/code-reference/pipelines/data_quality/data_manipulation/spark/datetime_features.md
+                          - Datetime String Conversion: sdk/code-reference/pipelines/data_quality/data_manipulation/spark/datetime_string_conversion.md
                           - Lag Features: sdk/code-reference/pipelines/data_quality/data_manipulation/spark/lag_features.md
+                          - MAD Outlier Detection: sdk/code-reference/pipelines/data_quality/data_manipulation/spark/mad_outlier_detection.md
+                          - Mixed Type Separation: sdk/code-reference/pipelines/data_quality/data_manipulation/spark/mixed_type_separation.md
                           - Rolling Statistics: sdk/code-reference/pipelines/data_quality/data_manipulation/spark/rolling_statistics.md
                           - Drop Empty Columns: sdk/code-reference/pipelines/data_quality/data_manipulation/spark/drop_empty_columns.md
                           - Drop Columns by NaN Percentage: sdk/code-reference/pipelines/data_quality/data_manipulation/spark/drop_columns_by_nan_percentage.md
