@@ -287,12 +287,12 @@ class ForecastPlot(MatplotlibVisualizationInterface):
         Save the visualization to file.
 
         Args:
-            filepath: Output file path
-            dpi: DPI for output image
-            **kwargs: Additional save options
+            filepath (Union[str, Path]): Output file path
+            dpi (Optional[int]): DPI for output image
+            **kwargs (Any): Additional save options
 
         Returns:
-            Path to the saved file
+            Path: Path to the saved file
         """
         if self._fig is None:
             self.plot()

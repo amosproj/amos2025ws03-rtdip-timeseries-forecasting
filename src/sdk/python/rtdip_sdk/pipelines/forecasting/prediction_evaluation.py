@@ -23,18 +23,18 @@ from sklearn.metrics import (
 )
 
 
-def calculate_timeseries_forecasting_metrics(y_test: np.ndarray, y_pred: np.ndarray, negative_metrics: bool = True):
+def calculate_timeseries_forecasting_metrics(y_test: np.ndarray, y_pred: np.ndarray, negative_metrics: bool = True) -> dict:
     """
     Calculates MAE, MSE, RMSE, MAPE and MASE for the parameter Dataframes.
 
     Args:
-        y_test (pd.Dataframe): The test dataframe
-        y_pred (pd.Dataframe): The prediction dataframe
+        y_test (np.ndarray): The test array
+        y_pred (np.ndarray): The prediction array
         negative_metrics (bool): True: the metrics will be multiplied by -1 at the end.
                                  False: the metrics will not be multiplied at the end
 
     Returns:
-        A dictionary containing all the calculated metrics
+        dict: A dictionary containing all the calculated metrics
 
     Raises:
         ValueError: If the dataframes have different lengths
@@ -92,13 +92,13 @@ def calculate_timeseries_forecasting_metrics(y_test: np.ndarray, y_pred: np.ndar
 
 
 def calculate_timeseries_robustness_metrics(y_test: np.ndarray, y_pred: np.ndarray,
-                                            negative_metrics: bool = False, tail_percentage: float = 0.2):
+                                            negative_metrics: bool = False, tail_percentage: float = 0.2) -> dict:
     """
     Takes the tails from the input dataframes and calls calculate_timeseries_forecasting_metrics() with them
 
     Args:
-        y_test (pd.Dataframe): The test dataframe
-        y_pred (pd.Dataframe): The prediction dataframe
+        y_test (np.ndarray): The test array
+        y_pred (np.ndarray): The prediction array
         negative_metrics (bool): True: the metrics will be multiplied by -1 at the end.
                                  False: the metrics will not be multiplied at the end
         tail_percentage (float): The length of the tail in percentages. 1 = whole dataframe
@@ -106,7 +106,7 @@ def calculate_timeseries_robustness_metrics(y_test: np.ndarray, y_pred: np.ndarr
                                                                         0.1 = the last 10% of the dataframe
 
     Returns:
-        A dictionary containing all the calculated metrics for the selected tails
+        dict: A dictionary containing all the calculated metrics for the selected tails
 
     """
 

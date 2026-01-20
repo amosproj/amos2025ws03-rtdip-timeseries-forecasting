@@ -183,7 +183,7 @@ class AutoGluonTimeSeries(MachineLearningInterface):
 
         return ts_df
 
-    def train(self, train_df: DataFrame):
+    def train(self, train_df: DataFrame) -> "AutoGluonTimeSeries":
         """
         Trains AutoGluon time series models on the provided data.
 
@@ -191,7 +191,7 @@ class AutoGluonTimeSeries(MachineLearningInterface):
             train_df (DataFrame): PySpark DataFrame containing training data.
 
         Returns:
-            self: Returns the instance for method chaining.
+            AutoGluonTimeSeries: Returns the instance for method chaining.
         """
         train_data = self._prepare_timeseries_dataframe(train_df)
 
@@ -342,7 +342,7 @@ class AutoGluonTimeSeries(MachineLearningInterface):
         shutil.copytree(source_path, path)
         return path
 
-    def load_model(self, path: str):
+    def load_model(self, path: str) -> "AutoGluonTimeSeries":
         """
         Loads a previously trained predictor from disk.
 
@@ -350,7 +350,7 @@ class AutoGluonTimeSeries(MachineLearningInterface):
             path (str): Directory path from where the model should be loaded.
 
         Returns:
-            self: Returns the instance for method chaining.
+            AutoGluonTimeSeries: Returns the instance for method chaining.
         """
         self.predictor = TimeSeriesPredictor.load(path)
         self.model = self.predictor

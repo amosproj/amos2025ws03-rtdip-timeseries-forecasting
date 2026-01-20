@@ -145,7 +145,7 @@ class ProphetForecaster(MachineLearningInterface):
 
         self.is_trained = True
 
-    def evaluate(self, test_df: DataFrame, freq: str):
+    def evaluate(self, test_df: DataFrame, freq: str) -> dict:
         """
         Evaluates the trained model using various metrics.
 
@@ -245,7 +245,7 @@ class ProphetForecaster(MachineLearningInterface):
 
         return predictions_df
 
-    def convert_spark_to_pandas(self, df: DataFrame):
+    def convert_spark_to_pandas(self, df: DataFrame) -> pd.DataFrame:
         """
         Converts a PySpark DataFrame to a Pandas DataFrame compatible with Prophet.
 
@@ -253,7 +253,7 @@ class ProphetForecaster(MachineLearningInterface):
             df (DataFrame): PySpark DataFrame.
 
         Returns:
-            DataFrame: Pandas DataFrame formatted for Prophet.
+            pd.DataFrame: Pandas DataFrame formatted for Prophet.
 
         Raises:
             ValueError: If required columns are missing from the DataFrame.

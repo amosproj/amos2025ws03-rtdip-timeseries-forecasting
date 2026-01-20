@@ -328,12 +328,12 @@ class DecompositionPlotInteractive(PlotlyVisualizationInterface):
         Save the visualization to file.
 
         Args:
-            filepath: Output file path.
-            format: Output format ("html" or "png").
-            **kwargs: Additional options (width, height, scale for PNG).
+            filepath (Union[str, Path]): Output file path.
+            format (str): Output format ("html" or "png").
+            **kwargs (Any): Additional options (width, height, scale for PNG).
 
         Returns:
-            Path to the saved file.
+            Path: Path to the saved file.
         """
         if self._fig is None:
             self.plot()
@@ -581,12 +581,12 @@ class MSTLDecompositionPlotInteractive(PlotlyVisualizationInterface):
         Save the visualization to file.
 
         Args:
-            filepath: Output file path.
-            format: Output format ("html" or "png").
-            **kwargs: Additional options.
+            filepath (Union[str, Path]): Output file path.
+            format (str): Output format ("html" or "png").
+            **kwargs (Any): Additional options.
 
         Returns:
-            Path to the saved file.
+            Path: Path to the saved file.
         """
         if self._fig is None:
             self.plot()
@@ -938,12 +938,12 @@ class DecompositionDashboardInteractive(PlotlyVisualizationInterface):
         Save the dashboard to file.
 
         Args:
-            filepath: Output file path.
-            format: Output format ("html" or "png").
-            **kwargs: Additional options.
+            filepath (Union[str, Path]): Output file path.
+            format (str): Output format ("html" or "png").
+            **kwargs (Any): Additional options.
 
         Returns:
-            Path to the saved file.
+            Path: Path to the saved file.
         """
         if self._fig is None:
             self.plot()

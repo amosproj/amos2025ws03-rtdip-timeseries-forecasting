@@ -82,7 +82,7 @@ class DropEmptyAndUselessColumns(DataManipulationBaseInterface):
     def settings() -> dict:
         return {}
 
-    def filter_data(self):
+    def filter_data(self) -> DataFrame:
         """
         Removes columns without values other than NaN from the DataFrame
 

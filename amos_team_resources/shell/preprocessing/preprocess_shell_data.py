@@ -430,12 +430,17 @@ def main():
     parser = argparse.ArgumentParser(
         description="Preprocess Shell sensor data using RTDIP pipeline components."
     )
+
+    # Get script directory to set default paths relative to it
+    script_dir = Path(__file__).parent
+    default_input = script_dir.parent / "data" / "ShellData.parquet"
+
     parser.add_argument(
         "--input",
         "-i",
         type=str,
-        default="ShellData.parquet",
-        help="Input file path, supports .parquet or .csv (default: ShellData.parquet)",
+        default=str(default_input),
+        help="Input file path, supports .parquet or .csv (default: ../data/ShellData.parquet)",
     )
     parser.add_argument(
         "--output",

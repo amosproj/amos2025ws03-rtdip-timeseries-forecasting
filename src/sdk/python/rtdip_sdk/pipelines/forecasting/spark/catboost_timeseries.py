@@ -174,7 +174,7 @@ class CatboostTimeSeries(MachineLearningInterface):
         learning_rate: float = 0.05,
         depth: int = 8,
         verbose: bool = True,
-    ):
+    ) -> object:
         """
         Builds a CatBoost-based time series forecaster using sktime reduction.
 
@@ -283,7 +283,7 @@ class CatboostTimeSeries(MachineLearningInterface):
         predictions_df = spark.createDataFrame(pred_pdf)
         return predictions_df
 
-    def evaluate(self, test_df: DataFrame):
+    def evaluate(self, test_df: DataFrame) -> dict:
         """
         Evaluates the trained model using various metrics.
 
@@ -337,7 +337,7 @@ class CatboostTimeSeries(MachineLearningInterface):
 
         return metrics
 
-    def convert_spark_to_pandas(self, df:DataFrame):
+    def convert_spark_to_pandas(self, df: DataFrame) -> pd.DataFrame:
         """
         Converts a PySpark DataFrame to a Pandas DataFrame with a DatetimeIndex.
 
