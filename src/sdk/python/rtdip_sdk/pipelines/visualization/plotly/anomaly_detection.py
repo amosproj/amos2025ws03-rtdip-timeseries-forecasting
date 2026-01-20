@@ -158,8 +158,8 @@ class AnomalyDetectionPlotInteractive(PlotlyVisualizationInterface):
         file. Otherwise, a static image is written (requires kaleido).
 
         Args:
-            filepath: Output file path
-            **kwargs: Additional arguments passed to write_html or write_image
+            filepath (Union[str, Path]): Output file path
+            **kwargs (Any): Additional arguments passed to write_html or write_image
 
         Returns:
             Path: The path to the saved file

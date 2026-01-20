@@ -268,12 +268,12 @@ class ForecastPlotInteractive(PlotlyVisualizationInterface):
         Save the visualization to file.
 
         Args:
-            filepath: Output file path
-            format: Output format ('html' or 'png')
-            **kwargs: Additional save options (width, height, scale for png)
+            filepath (Union[str, Path]): Output file path
+            format (str): Output format ('html' or 'png')
+            **kwargs (Any): Additional save options (width, height, scale for png)
 
         Returns:
-            Path to the saved file
+            Path: Path to the saved file
         """
         if self._fig is None:
             self.plot()

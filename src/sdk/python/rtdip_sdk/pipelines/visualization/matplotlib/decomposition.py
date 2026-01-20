@@ -165,15 +165,13 @@ class DecompositionPlot(MatplotlibVisualizationInterface):
     ```
 
     Parameters:
-        decomposition_data: DataFrame with decomposition output containing
+        decomposition_data (PandasDataFrame): DataFrame with decomposition output containing
             timestamp, value, trend, seasonal, and residual columns.
-        timestamp_column: Name of timestamp column (default: "timestamp")
-        value_column: Name of original value column (default: "value")
-        sensor_id: Optional sensor identifier for the plot title.
-        title: Optional custom plot title.
-        show_legend: Whether to show legends on each panel (default: True).
-        column_mapping: Optional mapping from user column names to expected names.
-        period_labels: Optional mapping from period values to custom display names.
+        sensor_id (Optional[str]): Optional sensor identifier for the plot title.
+        title (Optional[str]): Optional custom plot title.
+        show_legend (bool): Whether to show legends on each panel (default: True).
+        column_mapping (Optional[Dict[str, str]]): Optional mapping from user column names to expected names.
+        period_labels (Optional[Dict[int, str]]): Optional mapping from period values to custom display names.
             Example: {144: "Day", 1008: "Week"} maps period 144 to "Day".
     """
 
@@ -353,12 +351,12 @@ class DecompositionPlot(MatplotlibVisualizationInterface):
         Save the visualization to file.
 
         Args:
-            filepath: Output file path.
-            dpi: DPI for output image. If None, uses config default.
-            **kwargs: Additional options passed to utils.save_plot.
+            filepath (Union[str, Path]): Output file path.
+            dpi (Optional[int]): DPI for output image. If None, uses config default.
+            **kwargs (Any): Additional options passed to utils.save_plot.
 
         Returns:
-            Path to the saved file.
+            Path: Path to the saved file.
         """
         if self._fig is None:
             self.plot()
@@ -602,12 +600,12 @@ class MSTLDecompositionPlot(MatplotlibVisualizationInterface):
         Save the visualization to file.
 
         Args:
-            filepath: Output file path.
-            dpi: DPI for output image.
-            **kwargs: Additional save options.
+            filepath (Union[str, Path]): Output file path.
+            dpi (Optional[int]): DPI for output image.
+            **kwargs (Any): Additional save options.
 
         Returns:
-            Path to the saved file.
+            Path: Path to the saved file.
         """
         if self._fig is None:
             self.plot()
@@ -956,12 +954,12 @@ class DecompositionDashboard(MatplotlibVisualizationInterface):
         Save the dashboard to file.
 
         Args:
-            filepath: Output file path.
-            dpi: DPI for output image.
-            **kwargs: Additional save options.
+            filepath (Union[str, Path]): Output file path.
+            dpi (Optional[int]): DPI for output image.
+            **kwargs (Any): Additional save options.
 
         Returns:
-            Path to the saved file.
+            Path: Path to the saved file.
         """
         if self._fig is None:
             self.plot()
@@ -1187,12 +1185,12 @@ class MultiSensorDecompositionPlot(MatplotlibVisualizationInterface):
         Save the visualization to file.
 
         Args:
-            filepath: Output file path.
-            dpi: DPI for output image.
-            **kwargs: Additional save options.
+            filepath (Union[str, Path]): Output file path.
+            dpi (Optional[int]): DPI for output image.
+            **kwargs (Any): Additional save options.
 
         Returns:
-            Path to the saved file.
+            Path: Path to the saved file.
         """
         if self._fig is None:
             self.plot()

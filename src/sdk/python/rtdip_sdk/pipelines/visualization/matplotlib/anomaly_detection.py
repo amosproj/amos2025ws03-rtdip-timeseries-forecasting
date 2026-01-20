@@ -215,9 +215,9 @@ class AnomalyDetectionPlot(MatplotlibVisualizationInterface):
         Save the visualization to file.
 
         Args:
-            filepath: Output file path
-            dpi: Dots per inch. Defaults to 150
-            **kwargs: Additional arguments passed to savefig
+            filepath (Union[str, Path]): Output file path
+            dpi (int): Dots per inch. Defaults to 150
+            **kwargs (Any): Additional arguments passed to savefig
 
         Returns:
             Path: The path to the saved file
