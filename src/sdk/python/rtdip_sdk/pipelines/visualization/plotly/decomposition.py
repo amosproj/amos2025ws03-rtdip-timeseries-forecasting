@@ -91,12 +91,28 @@ def _extract_period_from_column(col_name: str) -> Optional[int]:
     return None
 
 
-def _get_period_label(period: Optional[int]) -> str:
-    """Get human-readable label for a period value."""
+def _get_period_label(
+    period: Optional[int], custom_labels: Optional[Dict[int, str]] = None
+) -> str:
+    """
+    Get human-readable label for a period value.
+
+    Args:
+        period: Period value (e.g., 24, 168, 1440)
+        custom_labels: Optional dictionary mapping period values to custom labels.
+            Takes precedence over built-in labels.
+
+    Returns:
+        Human-readable label (e.g., "Daily", "Weekly")
+    """
     if period is None:
         return "Seasonal"
 
-    period_labels = {
+    # Check custom labels first
+    if custom_labels and period in custom_labels:
+        return custom_labels[period]
+
+    default_labels = {
         24: "Daily (24h)",
         168: "Weekly (168h)",
         8760: "Yearly",
@@ -107,7 +123,7 @@ def _get_period_label(period: Optional[int]) -> str:
         366: "Yearly (366d)",
     }
 
-    return period_labels.get(period, f"Period {period}")
+    return default_labels.get(period, f"Period {period}")
 
 
 class DecompositionPlotInteractive(PlotlyVisualizationInterface):
@@ -124,7 +140,8 @@ class DecompositionPlotInteractive(PlotlyVisualizationInterface):
 
     plot = DecompositionPlotInteractive(
         decomposition_data=result_df,
-        sensor_id="SENSOR_001"
+        sensor_id="SENSOR_001",
+        period_labels={144: "Day", 1008: "Week"}  # Custom period names
     )
     fig = plot.plot()
     plot.save_html("decomposition.html")
@@ -138,6 +155,8 @@ class DecompositionPlotInteractive(PlotlyVisualizationInterface):
         title: Optional custom plot title.
         show_rangeslider: Whether to show range slider (default: True).
         column_mapping: Optional column name mapping.
+        period_labels: Optional mapping from period values to custom display names.
+            Example: {144: "Day", 1008: "Week"} maps period 144 to "Day".
     """
 
     decomposition_data: PandasDataFrame
@@ -147,6 +166,7 @@ class DecompositionPlotInteractive(PlotlyVisualizationInterface):
     title: Optional[str]
     show_rangeslider: bool
     column_mapping: Optional[Dict[str, str]]
+    period_labels: Optional[Dict[int, str]]
     _fig: Optional[go.Figure]
     _seasonal_columns: List[str]
 
@@ -159,6 +179,7 @@ class DecompositionPlotInteractive(PlotlyVisualizationInterface):
         title: Optional[str] = None,
         show_rangeslider: bool = True,
         column_mapping: Optional[Dict[str, str]] = None,
+        period_labels: Optional[Dict[int, str]] = None,
     ) -> None:
         self.timestamp_column = timestamp_column
         self.value_column = value_column
@@ -166,6 +187,7 @@ class DecompositionPlotInteractive(PlotlyVisualizationInterface):
         self.title = title
         self.show_rangeslider = show_rangeslider
         self.column_mapping = column_mapping
+        self.period_labels = period_labels
         self._fig = None
 
         self.decomposition_data = apply_column_mapping(
@@ -208,7 +230,7 @@ class DecompositionPlotInteractive(PlotlyVisualizationInterface):
         subplot_titles = ["Original", "Trend"]
         for col in self._seasonal_columns:
             period = _extract_period_from_column(col)
-            subplot_titles.append(_get_period_label(period))
+            subplot_titles.append(_get_period_label(period, self.period_labels))
         subplot_titles.append("Residual")
 
         self._fig = make_subplots(
@@ -253,7 +275,7 @@ class DecompositionPlotInteractive(PlotlyVisualizationInterface):
         for idx, col in enumerate(self._seasonal_columns):
             period = _extract_period_from_column(col)
             color = config.get_seasonal_color(period, idx) if period else config.DECOMPOSITION_COLORS["seasonal"]
-            label = _get_period_label(period)
+            label = _get_period_label(period, self.period_labels)
 
             self._fig.add_trace(
                 go.Scatter(
@@ -375,7 +397,8 @@ class MSTLDecompositionPlotInteractive(PlotlyVisualizationInterface):
 
     plot = MSTLDecompositionPlotInteractive(
         decomposition_data=mstl_result,
-        sensor_id="SENSOR_001"
+        sensor_id="SENSOR_001",
+        period_labels={144: "Day", 1008: "Week"}  # Custom period names
     )
     fig = plot.plot()
     plot.save_html("mstl_decomposition.html")
@@ -389,6 +412,8 @@ class MSTLDecompositionPlotInteractive(PlotlyVisualizationInterface):
         title: Optional custom title.
         show_rangeslider: Whether to show range slider (default: True).
         column_mapping: Optional column name mapping.
+        period_labels: Optional mapping from period values to custom display names.
+            Example: {144: "Day", 1008: "Week"} maps period 144 to "Day".
     """
 
     decomposition_data: PandasDataFrame
@@ -398,6 +423,7 @@ class MSTLDecompositionPlotInteractive(PlotlyVisualizationInterface):
     title: Optional[str]
     show_rangeslider: bool
     column_mapping: Optional[Dict[str, str]]
+    period_labels: Optional[Dict[int, str]]
     _fig: Optional[go.Figure]
     _seasonal_columns: List[str]
 
@@ -410,6 +436,7 @@ class MSTLDecompositionPlotInteractive(PlotlyVisualizationInterface):
         title: Optional[str] = None,
         show_rangeslider: bool = True,
         column_mapping: Optional[Dict[str, str]] = None,
+        period_labels: Optional[Dict[int, str]] = None,
     ) -> None:
         self.timestamp_column = timestamp_column
         self.value_column = value_column
@@ -417,6 +444,7 @@ class MSTLDecompositionPlotInteractive(PlotlyVisualizationInterface):
         self.title = title
         self.show_rangeslider = show_rangeslider
         self.column_mapping = column_mapping
+        self.period_labels = period_labels
         self._fig = None
 
         self.decomposition_data = apply_column_mapping(
@@ -460,7 +488,7 @@ class MSTLDecompositionPlotInteractive(PlotlyVisualizationInterface):
         subplot_titles = ["Original", "Trend"]
         for col in self._seasonal_columns:
             period = _extract_period_from_column(col)
-            subplot_titles.append(_get_period_label(period))
+            subplot_titles.append(_get_period_label(period, self.period_labels))
         subplot_titles.append("Residual")
 
         self._fig = make_subplots(
@@ -505,7 +533,7 @@ class MSTLDecompositionPlotInteractive(PlotlyVisualizationInterface):
         for idx, col in enumerate(self._seasonal_columns):
             period = _extract_period_from_column(col)
             color = config.get_seasonal_color(period, idx) if period else config.DECOMPOSITION_COLORS["seasonal"]
-            label = _get_period_label(period)
+            label = _get_period_label(period, self.period_labels)
 
             self._fig.add_trace(
                 go.Scatter(
@@ -628,7 +656,8 @@ class DecompositionDashboardInteractive(PlotlyVisualizationInterface):
 
     dashboard = DecompositionDashboardInteractive(
         decomposition_data=result_df,
-        sensor_id="SENSOR_001"
+        sensor_id="SENSOR_001",
+        period_labels={144: "Day", 1008: "Week"}  # Custom period names
     )
     fig = dashboard.plot()
     dashboard.save_html("decomposition_dashboard.html")
@@ -641,6 +670,8 @@ class DecompositionDashboardInteractive(PlotlyVisualizationInterface):
         sensor_id: Optional sensor identifier.
         title: Optional custom title.
         column_mapping: Optional column name mapping.
+        period_labels: Optional mapping from period values to custom display names.
+            Example: {144: "Day", 1008: "Week"} maps period 144 to "Day".
     """
 
     decomposition_data: PandasDataFrame
@@ -649,6 +680,7 @@ class DecompositionDashboardInteractive(PlotlyVisualizationInterface):
     sensor_id: Optional[str]
     title: Optional[str]
     column_mapping: Optional[Dict[str, str]]
+    period_labels: Optional[Dict[int, str]]
     _fig: Optional[go.Figure]
     _seasonal_columns: List[str]
     _statistics: Optional[Dict[str, Any]]
@@ -661,12 +693,14 @@ class DecompositionDashboardInteractive(PlotlyVisualizationInterface):
         sensor_id: Optional[str] = None,
         title: Optional[str] = None,
         column_mapping: Optional[Dict[str, str]] = None,
+        period_labels: Optional[Dict[int, str]] = None,
     ) -> None:
         self.timestamp_column = timestamp_column
         self.value_column = value_column
         self.sensor_id = sensor_id
         self.title = title
         self.column_mapping = column_mapping
+        self.period_labels = period_labels
         self._fig = None
         self._statistics = None
 
@@ -808,7 +842,7 @@ class DecompositionDashboardInteractive(PlotlyVisualizationInterface):
         for idx, col in enumerate(self._seasonal_columns):
             period = _extract_period_from_column(col)
             color = config.get_seasonal_color(period, idx) if period else config.DECOMPOSITION_COLORS["seasonal"]
-            label = _get_period_label(period)
+            label = _get_period_label(period, self.period_labels)
             strength = self._statistics["seasonality_strength"].get(col, 0)
 
             self._fig.add_trace(
@@ -848,7 +882,7 @@ class DecompositionDashboardInteractive(PlotlyVisualizationInterface):
 
         for col in self._seasonal_columns:
             period = _extract_period_from_column(col)
-            label = _get_period_label(period) if period else "Seasonal"
+            label = _get_period_label(period, self.period_labels) if period else "Seasonal"
             var_pct = self._statistics["variance_explained"].get(col, 0)
             strength = self._statistics["seasonality_strength"].get(col, 0)
             cell_values[0].append(label)
