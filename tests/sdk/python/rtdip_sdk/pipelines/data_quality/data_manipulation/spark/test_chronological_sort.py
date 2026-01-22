@@ -26,7 +26,9 @@ from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import (
 
 @pytest.fixture(scope="session")
 def spark():
-    spark_session = SparkSession.builder.master("local[2]").appName("test").getOrCreate()
+    spark_session = (
+        SparkSession.builder.master("local[2]").appName("test").getOrCreate()
+    )
     yield spark_session
     spark_session.stop()
 
@@ -53,7 +55,9 @@ def test_group_column_not_exists(spark):
     )
 
     with pytest.raises(ValueError, match="Group column 'region' does not exist"):
-        sorter = ChronologicalSort(df, datetime_column="timestamp", group_columns=["region"])
+        sorter = ChronologicalSort(
+            df, datetime_column="timestamp", group_columns=["region"]
+        )
         sorter.filter_data()
 
 

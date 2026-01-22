@@ -26,7 +26,9 @@ from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import (
 
 @pytest.fixture(scope="session")
 def spark():
-    spark_session = SparkSession.builder.master("local[2]").appName("test").getOrCreate()
+    spark_session = (
+        SparkSession.builder.master("local[2]").appName("test").getOrCreate()
+    )
     yield spark_session
     spark_session.stop()
 
@@ -46,9 +48,13 @@ def test_column_not_exists(spark):
 
 
 def test_empty_formats(spark):
-    df = spark.createDataFrame([("A", "2024-01-01 10:00:00")], ["sensor_id", "EventTime"])
+    df = spark.createDataFrame(
+        [("A", "2024-01-01 10:00:00")], ["sensor_id", "EventTime"]
+    )
 
-    with pytest.raises(ValueError, match="At least one datetime format must be provided"):
+    with pytest.raises(
+        ValueError, match="At least one datetime format must be provided"
+    ):
         converter = DatetimeStringConversion(df, column="EventTime", formats=[])
         converter.filter_data()
 
@@ -106,7 +112,9 @@ def test_mixed_formats(spark):
 
 
 def test_custom_output_column(spark):
-    df = spark.createDataFrame([("A", "2024-01-02 20:03:46")], ["sensor_id", "EventTime"])
+    df = spark.createDataFrame(
+        [("A", "2024-01-02 20:03:46")], ["sensor_id", "EventTime"]
+    )
 
     converter = DatetimeStringConversion(
         df, column="EventTime", output_column="Timestamp"
@@ -118,7 +126,9 @@ def test_custom_output_column(spark):
 
 
 def test_keep_original_true(spark):
-    df = spark.createDataFrame([("A", "2024-01-02 20:03:46")], ["sensor_id", "EventTime"])
+    df = spark.createDataFrame(
+        [("A", "2024-01-02 20:03:46")], ["sensor_id", "EventTime"]
+    )
 
     converter = DatetimeStringConversion(df, column="EventTime", keep_original=True)
     result_df = converter.filter_data()
@@ -128,7 +138,9 @@ def test_keep_original_true(spark):
 
 
 def test_keep_original_false(spark):
-    df = spark.createDataFrame([("A", "2024-01-02 20:03:46")], ["sensor_id", "EventTime"])
+    df = spark.createDataFrame(
+        [("A", "2024-01-02 20:03:46")], ["sensor_id", "EventTime"]
+    )
 
     converter = DatetimeStringConversion(df, column="EventTime", keep_original=False)
     result_df = converter.filter_data()

@@ -25,7 +25,9 @@ from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import (
 
 @pytest.fixture(scope="session")
 def spark():
-    spark_session = SparkSession.builder.master("local[2]").appName("test").getOrCreate()
+    spark_session = (
+        SparkSession.builder.master("local[2]").appName("test").getOrCreate()
+    )
     yield spark_session
     spark_session.stop()
 
@@ -231,14 +233,16 @@ def test_with_null_values(spark):
 
 
 def test_different_n_sigma_values(spark):
-    df = spark.createDataFrame(
-        [(10.0,), (11.0,), (12.0,), (13.0,), (20.0,)], ["Value"]
-    )
+    df = spark.createDataFrame([(10.0,), (11.0,), (12.0,), (13.0,), (20.0,)], ["Value"])
 
-    detector_strict = MADOutlierDetection(df, column="Value", n_sigma=1.0, action="flag")
+    detector_strict = MADOutlierDetection(
+        df, column="Value", n_sigma=1.0, action="flag"
+    )
     result_strict = detector_strict.filter_data()
 
-    detector_loose = MADOutlierDetection(df, column="Value", n_sigma=10.0, action="flag")
+    detector_loose = MADOutlierDetection(
+        df, column="Value", n_sigma=10.0, action="flag"
+    )
     result_loose = detector_loose.filter_data()
 
     strict_count = sum(1 for row in result_strict.collect() if row["Value_is_outlier"])

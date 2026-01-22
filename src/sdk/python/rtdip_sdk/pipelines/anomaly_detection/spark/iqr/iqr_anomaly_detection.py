@@ -66,4 +66,3 @@ class IQRAnomalyDetectionComponent(PipelineComponent):
         df["is_anomaly"] = (values < lower) | (values > upper)
 
         return df
-

@@ -65,11 +65,7 @@ class DropByNaNPercentage(PandasDataManipulationBaseInterface):
     df: PandasDataFrame
     nan_threshold: float
 
-    def __init__(
-            self,
-            df: PandasDataFrame,
-            nan_threshold
-    ) -> None:
+    def __init__(self, df: PandasDataFrame, nan_threshold) -> None:
         self.df = df
         self.nan_threshold = nan_threshold
 

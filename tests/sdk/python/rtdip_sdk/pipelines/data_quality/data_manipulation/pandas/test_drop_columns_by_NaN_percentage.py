@@ -53,10 +53,10 @@ def test_negative_threshold():
 def test_drop_columns_by_nan_percentage():
     """Drop columns exceeding threshold"""
     data = {
-        "a": [1, None, 3],          # 33% NaN -> keep
-        "b": [None, None, None],    # 100% NaN -> drop
-        "c": [7, 8, 9],             # 0% NaN -> keep
-        "d": [1, None, None],       # 66% NaN -> drop at threshold 0.5
+        "a": [1, None, 3],  # 33% NaN -> keep
+        "b": [None, None, None],  # 100% NaN -> drop
+        "c": [7, 8, 9],  # 0% NaN -> keep
+        "d": [1, None, None],  # 66% NaN -> drop at threshold 0.5
     }
     df = pd.DataFrame(data)
 
@@ -71,9 +71,9 @@ def test_drop_columns_by_nan_percentage():
 def test_threshold_1_keeps_all_columns():
     """Threshold = 1 means only 100% NaN columns removed"""
     data = {
-        "a": [np.nan, 1, 2],   # 33% NaN -> keep
+        "a": [np.nan, 1, 2],  # 33% NaN -> keep
         "b": [np.nan, np.nan, np.nan],  # 100% -> drop
-        "c": [3, 4, 5],        # 0% -> keep
+        "c": [3, 4, 5],  # 0% -> keep
     }
     df = pd.DataFrame(data)
 
@@ -86,8 +86,8 @@ def test_threshold_1_keeps_all_columns():
 def test_threshold_0_removes_all_columns_with_any_nan():
     """Threshold = 0 removes every column that has any NaN"""
     data = {
-        "a": [1, np.nan, 3],   # contains NaN → drop
-        "b": [4, 5, 6],        # no NaN → keep
+        "a": [1, np.nan, 3],  # contains NaN → drop
+        "b": [4, 5, 6],  # no NaN → keep
         "c": [np.nan, np.nan, 9],  # contains NaN → drop
     }
     df = pd.DataFrame(data)
@@ -100,11 +100,13 @@ def test_threshold_0_removes_all_columns_with_any_nan():
 
 def test_no_columns_dropped():
     """No column exceeds threshold → expect identical DataFrame"""
-    df = pd.DataFrame({
-        "a": [1, 2, 3],
-        "b": [4.0, 5.0, 6.0],
-        "c": ["x", "y", "z"],
-    })
+    df = pd.DataFrame(
+        {
+            "a": [1, 2, 3],
+            "b": [4.0, 5.0, 6.0],
+            "c": ["x", "y", "z"],
+        }
+    )
 
     dropper = DropByNaNPercentage(df, nan_threshold=0.5)
     result_df = dropper.apply()
@@ -114,10 +116,9 @@ def test_no_columns_dropped():
 
 def test_original_df_not_modified():
     """Ensure original DataFrame remains unchanged"""
-    df = pd.DataFrame({
-        "a": [1, None, 3],   # 33% NaN
-        "b": [None, None, None]  # 100% NaN → drop
-    })
+    df = pd.DataFrame(
+        {"a": [1, None, 3], "b": [None, None, None]}  # 33% NaN  # 100% NaN → drop
+    )
 
     df_copy = df.copy()
 
@@ -126,6 +127,7 @@ def test_original_df_not_modified():
 
     # original must stay untouched
     pd.testing.assert_frame_equal(df, df_copy)
+
 
 def test_system_type():
     """Test that system_type returns SystemType.PYTHON"""

@@ -44,11 +44,11 @@ def test_none_df():
 def test_drop_empty_and_constant_columns():
     """Drops fully empty and constant columns"""
     data = {
-        "a": [1, 2, 3],                 # informative
+        "a": [1, 2, 3],  # informative
         "b": [np.nan, np.nan, np.nan],  # all NaN -> drop
-        "c": [5, 5, 5],                 # constant -> drop
-        "d": [np.nan, 7, 7],            # non-NaN all equal -> drop
-        "e": [1, np.nan, 2],            # at least 2 unique non-NaN -> keep
+        "c": [5, 5, 5],  # constant -> drop
+        "d": [np.nan, 7, 7],  # non-NaN all equal -> drop
+        "e": [1, np.nan, 2],  # at least 2 unique non-NaN -> keep
     }
     df = pd.DataFrame(data)
 

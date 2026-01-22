@@ -3,7 +3,9 @@ from ...._pipeline_utils.models import Libraries, SystemType
 from pyspark.sql import DataFrame
 from pandas import DataFrame as PandasDataFrame
 
-from ..pandas.drop_columns_by_NaN_percentage import DropByNaNPercentage as PandasDropByNaNPercentage
+from ..pandas.drop_columns_by_NaN_percentage import (
+    DropByNaNPercentage as PandasDropByNaNPercentage,
+)
 
 
 class DropByNaNPercentage(DataManipulationBaseInterface):
@@ -59,14 +61,12 @@ class DropByNaNPercentage(DataManipulationBaseInterface):
     df: DataFrame
     nan_threshold: float
 
-    def __init__(
-            self,
-            df: DataFrame,
-            nan_threshold: float
-    ) -> None:
+    def __init__(self, df: DataFrame, nan_threshold: float) -> None:
         self.df = df
         self.nan_threshold = nan_threshold
-        self.pandas_DropByNaNPercentage = PandasDropByNaNPercentage(df.toPandas(), nan_threshold)
+        self.pandas_DropByNaNPercentage = PandasDropByNaNPercentage(
+            df.toPandas(), nan_threshold
+        )
 
     @staticmethod
     def system_type():
@@ -98,6 +98,7 @@ class DropByNaNPercentage(DataManipulationBaseInterface):
         result_pdf = self.pandas_DropByNaNPercentage.apply()
 
         from pyspark.sql import SparkSession
+
         spark = SparkSession.builder.getOrCreate()
 
         result_df = spark.createDataFrame(result_pdf)

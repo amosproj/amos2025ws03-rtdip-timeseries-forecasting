@@ -219,9 +219,7 @@ class DatetimeFeatures(DataManipulationBaseInterface):
                     col_name, F.dayofweek(dt_col).isin([1, 7])
                 )
             elif feature == "is_month_start":
-                result_df = result_df.withColumn(
-                    col_name, F.dayofmonth(dt_col) == 1
-                )
+                result_df = result_df.withColumn(col_name, F.dayofmonth(dt_col) == 1)
             elif feature == "is_month_end":
                 # Check if day + 1 changes month
                 result_df = result_df.withColumn(
@@ -232,8 +230,7 @@ class DatetimeFeatures(DataManipulationBaseInterface):
                 # First day of quarter: month in (1, 4, 7, 10) and day = 1
                 result_df = result_df.withColumn(
                     col_name,
-                    (F.month(dt_col).isin([1, 4, 7, 10]))
-                    & (F.dayofmonth(dt_col) == 1),
+                    (F.month(dt_col).isin([1, 4, 7, 10])) & (F.dayofmonth(dt_col) == 1),
                 )
             elif feature == "is_quarter_end":
                 # Last day of quarter: month in (3, 6, 9, 12) and is_month_end

@@ -4,9 +4,7 @@ from .iqr_anomaly_detection import IQRAnomalyDetectionComponent
 from .interfaces import IQRAnomalyDetectionConfig
 
 
-class DecompositionIQRAnomalyDetectionComponent(
-    IQRAnomalyDetectionComponent
-):
+class DecompositionIQRAnomalyDetectionComponent(IQRAnomalyDetectionComponent):
     """
     IQR anomaly detection on decomposed time series.
 
@@ -34,4 +32,3 @@ class DecompositionIQRAnomalyDetectionComponent(
         df[self.value_column] = df[self.input_component]
 
         return super().run(df)
-

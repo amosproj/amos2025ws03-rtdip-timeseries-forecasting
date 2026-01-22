@@ -18,4 +18,3 @@ class IQRAnomalyDetectionConfig(TypedDict, total=False):
 
     # Used only for decomposition-based component
     input_component: str
-

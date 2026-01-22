@@ -64,8 +64,8 @@ class DropEmptyAndUselessColumns(PandasDataManipulationBaseInterface):
     df: PandasDataFrame
 
     def __init__(
-            self,
-            df: PandasDataFrame,
+        self,
+        df: PandasDataFrame,
     ) -> None:
         self.df = df
 

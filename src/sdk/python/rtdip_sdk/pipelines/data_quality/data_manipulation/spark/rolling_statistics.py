@@ -204,9 +204,9 @@ class RollingStatistics(DataManipulationBaseInterface):
                     # Median requires percentile_approx in window function
                     result_df = result_df.withColumn(
                         col_name,
-                        F.expr(
-                            f"percentile_approx({self.value_column}, 0.5)"
-                        ).over(rolling_window),
+                        F.expr(f"percentile_approx({self.value_column}, 0.5)").over(
+                            rolling_window
+                        ),
                     )
 
         return result_df

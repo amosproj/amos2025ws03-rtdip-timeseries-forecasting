@@ -32,7 +32,10 @@ from typing import Dict, List, Optional
 
 from ..interfaces import MachineLearningInterface
 from ..._pipeline_utils.models import Libraries, SystemType, PyPiLibrary
-from ..prediction_evaluation import calculate_timeseries_forecasting_metrics, calculate_timeseries_robustness_metrics
+from ..prediction_evaluation import (
+    calculate_timeseries_forecasting_metrics,
+    calculate_timeseries_robustness_metrics,
+)
 
 
 class CatBoostTimeSeries(MachineLearningInterface):
@@ -221,7 +224,9 @@ class CatBoostTimeSeries(MachineLearningInterface):
         feature_importance = pd.DataFrame(
             {
                 "feature": self.feature_cols,
-                "importance": self.model.get_feature_importance(type="PredictionValuesChange"),
+                "importance": self.model.get_feature_importance(
+                    type="PredictionValuesChange"
+                ),
             }
         ).sort_values("importance", ascending=False)
 

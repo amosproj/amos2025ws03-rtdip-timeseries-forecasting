@@ -213,9 +213,7 @@ def save_plot(
 # AXIS FORMATTING
 
 
-def format_time_axis(
-    ax, rotation: int = 45, time_format: Optional[str] = None
-) -> None:
+def format_time_axis(ax, rotation: int = 45, time_format: Optional[str] = None) -> None:
     """
     Format time-based x-axis with standard settings.
 
@@ -351,9 +349,7 @@ def prepare_time_series_data(
     return df
 
 
-def convert_spark_to_pandas(
-    spark_df, sort_by: Optional[str] = None
-) -> PandasDataFrame:
+def convert_spark_to_pandas(spark_df, sort_by: Optional[str] = None) -> PandasDataFrame:
     """
     Convert Spark DataFrame to Pandas DataFrame for plotting.
 

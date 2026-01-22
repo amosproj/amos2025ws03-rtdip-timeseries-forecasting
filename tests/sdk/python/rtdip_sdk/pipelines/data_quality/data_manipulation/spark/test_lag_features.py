@@ -25,7 +25,9 @@ from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import (
 
 @pytest.fixture(scope="session")
 def spark():
-    spark_session = SparkSession.builder.master("local[2]").appName("test").getOrCreate()
+    spark_session = (
+        SparkSession.builder.master("local[2]").appName("test").getOrCreate()
+    )
     yield spark_session
     spark_session.stop()
 

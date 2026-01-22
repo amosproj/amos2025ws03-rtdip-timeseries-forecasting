@@ -186,12 +186,9 @@ class MADOutlierDetection(DataManipulationBaseInterface):
                 result_df = result_df.withColumn(self.outlier_column, F.lit(False))
             return result_df
 
-        is_outlier = (
-            include_condition
-            & (
-                (F.col(self.column) < F.lit(lower_bound))
-                | (F.col(self.column) > F.lit(upper_bound))
-            )
+        is_outlier = include_condition & (
+            (F.col(self.column) < F.lit(lower_bound))
+            | (F.col(self.column) > F.lit(upper_bound))
         )
 
         if self.action == "flag":

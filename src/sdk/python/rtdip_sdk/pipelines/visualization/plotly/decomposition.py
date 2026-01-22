@@ -274,7 +274,11 @@ class DecompositionPlotInteractive(PlotlyVisualizationInterface):
 
         for idx, col in enumerate(self._seasonal_columns):
             period = _extract_period_from_column(col)
-            color = config.get_seasonal_color(period, idx) if period else config.DECOMPOSITION_COLORS["seasonal"]
+            color = (
+                config.get_seasonal_color(period, idx)
+                if period
+                else config.DECOMPOSITION_COLORS["seasonal"]
+            )
             label = _get_period_label(period, self.period_labels)
 
             self._fig.add_trace(
@@ -532,7 +536,11 @@ class MSTLDecompositionPlotInteractive(PlotlyVisualizationInterface):
 
         for idx, col in enumerate(self._seasonal_columns):
             period = _extract_period_from_column(col)
-            color = config.get_seasonal_color(period, idx) if period else config.DECOMPOSITION_COLORS["seasonal"]
+            color = (
+                config.get_seasonal_color(period, idx)
+                if period
+                else config.DECOMPOSITION_COLORS["seasonal"]
+            )
             label = _get_period_label(period, self.period_labels)
 
             self._fig.add_trace(
@@ -565,7 +573,9 @@ class MSTLDecompositionPlotInteractive(PlotlyVisualizationInterface):
 
         plot_title = self.title
         if plot_title is None:
-            pattern_str = f"{n_seasonal} seasonal pattern{'s' if n_seasonal > 1 else ''}"
+            pattern_str = (
+                f"{n_seasonal} seasonal pattern{'s' if n_seasonal > 1 else ''}"
+            )
             if self.sensor_id:
                 plot_title = f"MSTL Decomposition ({pattern_str}) - {self.sensor_id}"
             else:
@@ -841,7 +851,11 @@ class DecompositionDashboardInteractive(PlotlyVisualizationInterface):
 
         for idx, col in enumerate(self._seasonal_columns):
             period = _extract_period_from_column(col)
-            color = config.get_seasonal_color(period, idx) if period else config.DECOMPOSITION_COLORS["seasonal"]
+            color = (
+                config.get_seasonal_color(period, idx)
+                if period
+                else config.DECOMPOSITION_COLORS["seasonal"]
+            )
             label = _get_period_label(period, self.period_labels)
             strength = self._statistics["seasonality_strength"].get(col, 0)
 
@@ -882,7 +896,9 @@ class DecompositionDashboardInteractive(PlotlyVisualizationInterface):
 
         for col in self._seasonal_columns:
             period = _extract_period_from_column(col)
-            label = _get_period_label(period, self.period_labels) if period else "Seasonal"
+            label = (
+                _get_period_label(period, self.period_labels) if period else "Seasonal"
+            )
             var_pct = self._statistics["variance_explained"].get(col, 0)
             strength = self._statistics["seasonality_strength"].get(col, 0)
             cell_values[0].append(label)
@@ -890,7 +906,9 @@ class DecompositionDashboardInteractive(PlotlyVisualizationInterface):
             cell_values[2].append(f"{strength:.3f}")
 
         cell_values[0].append("Residual")
-        cell_values[1].append(f"{self._statistics['variance_explained']['residual']:.1f}%")
+        cell_values[1].append(
+            f"{self._statistics['variance_explained']['residual']:.1f}%"
+        )
         cell_values[2].append("-")
 
         cell_values[0].append("")

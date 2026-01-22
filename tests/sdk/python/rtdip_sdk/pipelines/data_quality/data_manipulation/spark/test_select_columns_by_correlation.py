@@ -30,13 +30,13 @@ from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import (
 @pytest.fixture(scope="session")
 def spark():
     spark = (
-        SparkSession.builder
-        .master("local[1]")
+        SparkSession.builder.master("local[1]")
         .appName("test-select-columns-by-correlation-wrapper")
         .getOrCreate()
     )
     yield spark
     spark.stop()
+
 
 def test_missing_target_column_raises(spark):
     """Target column not present in DataFrame -> raises ValueError"""
@@ -149,10 +149,10 @@ def test_select_columns_by_correlation_basic(spark):
     pdf = pd.DataFrame(
         {
             "timestamp": pd.date_range("2025-01-01", periods=5, freq="h"),
-            "feature_pos": [1, 2, 3, 4, 5],        # corr = 1.0 with target
-            "feature_neg": [5, 4, 3, 2, 1],        # corr = -1.0 with target
-            "feature_low": [0, 0, 1, 0, 0],        # low corr with target
-            "constant": [10, 10, 10, 10, 10],      # no corr / NaN
+            "feature_pos": [1, 2, 3, 4, 5],  # corr = 1.0 with target
+            "feature_neg": [5, 4, 3, 2, 1],  # corr = -1.0 with target
+            "feature_low": [0, 0, 1, 0, 0],  # low corr with target
+            "constant": [10, 10, 10, 10, 10],  # no corr / NaN
             "target": [1, 2, 3, 4, 5],
         }
     )
@@ -169,10 +169,18 @@ def test_select_columns_by_correlation_basic(spark):
     expected_columns = {"timestamp", "feature_pos", "feature_neg", "target"}
     assert set(result_pdf.columns) == expected_columns
 
-    pd.testing.assert_series_equal(result_pdf["feature_pos"], pdf["feature_pos"], check_names=False)
-    pd.testing.assert_series_equal(result_pdf["feature_neg"], pdf["feature_neg"], check_names=False)
-    pd.testing.assert_series_equal(result_pdf["target"], pdf["target"], check_names=False)
-    pd.testing.assert_series_equal(result_pdf["timestamp"], pdf["timestamp"], check_names=False)
+    pd.testing.assert_series_equal(
+        result_pdf["feature_pos"], pdf["feature_pos"], check_names=False
+    )
+    pd.testing.assert_series_equal(
+        result_pdf["feature_neg"], pdf["feature_neg"], check_names=False
+    )
+    pd.testing.assert_series_equal(
+        result_pdf["target"], pdf["target"], check_names=False
+    )
+    pd.testing.assert_series_equal(
+        result_pdf["timestamp"], pdf["timestamp"], check_names=False
+    )
 
 
 def test_correlation_filter_includes_only_features_above_threshold(spark):

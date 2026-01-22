@@ -772,7 +772,12 @@ class ResidualPlot(MatplotlibVisualizationInterface):
         )
 
         self._ax.axhline(
-            0, color="black", linestyle="--", linewidth=1.5, alpha=0.5, label="Zero Error"
+            0,
+            color="black",
+            linestyle="--",
+            linewidth=1.5,
+            alpha=0.5,
+            label="Zero Error",
         )
 
         mean_residual = residuals.mean()
@@ -914,7 +919,11 @@ class ErrorDistributionPlot(MatplotlibVisualizationInterface):
         median_error = errors.median()
 
         self._ax.axvline(
-            mean_error, color="red", linestyle="--", linewidth=2, label=f"Mean: {mean_error:.3f}"
+            mean_error,
+            color="red",
+            linestyle="--",
+            linewidth=2,
+            label=f"Mean: {mean_error:.3f}",
         )
         self._ax.axvline(
             median_error,
@@ -1074,7 +1083,11 @@ class ScatterPlot(MatplotlibVisualizationInterface):
 
         if self.show_metrics:
             try:
-                from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+                from sklearn.metrics import (
+                    mean_absolute_error,
+                    mean_squared_error,
+                    r2_score,
+                )
 
                 r2 = r2_score(self.actual, self.predicted)
                 rmse = np.sqrt(mean_squared_error(self.actual, self.predicted))
@@ -1300,7 +1313,11 @@ class ForecastDashboard(MatplotlibVisualizationInterface):
 
             errors = merged["value"] - merged["mean"]
             try:
-                from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+                from sklearn.metrics import (
+                    mean_absolute_error,
+                    mean_squared_error,
+                    r2_score,
+                )
 
                 mae = mean_absolute_error(merged["value"], merged["mean"])
                 mse = mean_squared_error(merged["value"], merged["mean"])

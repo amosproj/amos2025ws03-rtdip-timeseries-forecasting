@@ -49,9 +49,7 @@ from .comparison import (
     ForecastDistributionPlotInteractive,
 )
 
-from .anomaly_detection import (
-    AnomalyDetectionPlotInteractive
-)
+from .anomaly_detection import AnomalyDetectionPlotInteractive
 from .decomposition import (
     DecompositionPlotInteractive,
     MSTLDecompositionPlotInteractive,

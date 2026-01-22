@@ -123,9 +123,7 @@ class DatetimeStringConversion(DataManipulationBaseInterface):
         result_df = self.df
         string_col = F.col(self.column).cast("string")
 
-        parse_attempts = [
-            F.to_timestamp(string_col, fmt) for fmt in self.formats
-        ]
+        parse_attempts = [F.to_timestamp(string_col, fmt) for fmt in self.formats]
 
         result_df = result_df.withColumn(
             self.output_column, F.coalesce(*parse_attempts)

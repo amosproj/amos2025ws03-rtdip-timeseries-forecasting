@@ -879,7 +879,11 @@ class ScatterPlotInteractive(PlotlyVisualizationInterface):
         )
 
         try:
-            from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+            from sklearn.metrics import (
+                mean_absolute_error,
+                mean_squared_error,
+                r2_score,
+            )
 
             mae = mean_absolute_error(self.actual, self.predicted)
             rmse = np.sqrt(mean_squared_error(self.actual, self.predicted))

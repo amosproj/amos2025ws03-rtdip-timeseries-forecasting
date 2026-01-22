@@ -58,9 +58,7 @@ from .comparison import (
     ForecastDistributionPlot,
     ComparisonDashboard,
 )
-from .anomaly_detection import (
-    AnomalyDetectionPlot
-)
+from .anomaly_detection import AnomalyDetectionPlot
 from .decomposition import (
     DecompositionPlot,
     MSTLDecompositionPlot,

@@ -125,8 +125,7 @@ class MixedTypeSeparation(DataManipulationBaseInterface):
         )
 
         is_non_numeric = (
-            F.col("_temp_string_col").isNotNull()
-            & F.col("_temp_numeric_col").isNull()
+            F.col("_temp_string_col").isNotNull() & F.col("_temp_numeric_col").isNull()
         )
 
         result_df = result_df.withColumn(

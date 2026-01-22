@@ -158,10 +158,10 @@ def test_select_columns_by_correlation_basic():
     df = pd.DataFrame(
         {
             "timestamp": pd.date_range("2025-01-01", periods=5, freq="H"),
-            "feature_pos": [1, 2, 3, 4, 5],        # corr = 1.0 with target
-            "feature_neg": [5, 4, 3, 2, 1],        # corr = -1.0 with target
-            "feature_low": [0, 0, 1, 0, 0],        # low corr with target
-            "constant": [10, 10, 10, 10, 10],      # no corr / NaN
+            "feature_pos": [1, 2, 3, 4, 5],  # corr = 1.0 with target
+            "feature_neg": [5, 4, 3, 2, 1],  # corr = -1.0 with target
+            "feature_low": [0, 0, 1, 0, 0],  # low corr with target
+            "constant": [10, 10, 10, 10, 10],  # no corr / NaN
             "target": [1, 2, 3, 4, 5],
         }
     )
@@ -222,8 +222,8 @@ def test_correlation_filter_uses_absolute_value_for_negative_correlation():
     df = pd.DataFrame(
         {
             "keep_col": [0, 1, 2, 3, 4],
-            "feature_pos": [1, 2, 3, 4, 5],   # strong positive correlation
-            "feature_neg": [5, 4, 3, 2, 1],   # strong negative correlation
+            "feature_pos": [1, 2, 3, 4, 5],  # strong positive correlation
+            "feature_neg": [5, 4, 3, 2, 1],  # strong negative correlation
             "target": [10, 20, 30, 40, 50],
         }
     )
@@ -248,9 +248,9 @@ def test_correlation_threshold_zero_keeps_all_numeric_features():
     df = pd.DataFrame(
         {
             "keep_col": ["x", "y", "z", "x"],
-            "feature_1": [1, 2, 3, 4],           # correlated with target
-            "feature_2": [4, 3, 2, 1],           # negatively correlated
-            "feature_weak": [0, 1, 0, 1],        # weak correlation
+            "feature_1": [1, 2, 3, 4],  # correlated with target
+            "feature_2": [4, 3, 2, 1],  # negatively correlated
+            "feature_weak": [0, 1, 0, 1],  # weak correlation
             "target": [10, 20, 30, 40],
         }
     )

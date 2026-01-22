@@ -140,9 +140,7 @@ class TestForecastPlot:
         assert isinstance(fig, plt.Figure)
         plt.close(fig)
 
-    def test_save(
-        self, sample_historical_data, sample_forecast_data, forecast_start
-    ):
+    def test_save(self, sample_historical_data, sample_forecast_data, forecast_start):
         """Test saving plot to file."""
         plot = ForecastPlot(
             historical_data=sample_historical_data,

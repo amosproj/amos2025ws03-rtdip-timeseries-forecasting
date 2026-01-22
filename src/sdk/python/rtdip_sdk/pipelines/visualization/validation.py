@@ -96,7 +96,9 @@ def apply_column_mapping(
         df = df.copy()
 
     if strict:
-        missing_sources = [col for col in column_mapping.keys() if col not in df.columns]
+        missing_sources = [
+            col for col in column_mapping.keys() if col not in df.columns
+        ]
         if missing_sources:
             raise VisualizationDataError(
                 f"Column mapping error: Source columns not found in DataFrame: {missing_sources}\n"
@@ -209,7 +211,7 @@ def coerce_datetime(
             continue
 
         if pd.api.types.is_datetime64_any_dtype(df[col]):
-            continue  
+            continue
 
         try:
             original_na_count = df[col].isna().sum()
@@ -265,7 +267,7 @@ def coerce_numeric(
             continue
 
         if pd.api.types.is_numeric_dtype(df[col]):
-            continue 
+            continue
 
         try:
             original_na_count = df[col].isna().sum()

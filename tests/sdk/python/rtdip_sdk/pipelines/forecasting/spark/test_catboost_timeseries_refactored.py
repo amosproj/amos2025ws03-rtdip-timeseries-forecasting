@@ -350,7 +350,9 @@ def test_feature_columns_definition(sample_timeseries_data):
 
     expected_features = ["sensor_encoded", "hour", "lag_1", "rolling_mean_12"]
     for feature in expected_features:
-        assert feature in cbts.feature_cols, f"Expected {feature} not in {cbts.feature_cols}"
+        assert (
+            feature in cbts.feature_cols
+        ), f"Expected {feature} not in {cbts.feature_cols}"
 
 
 def test_system_type():
@@ -495,9 +497,13 @@ def test_evaluate_returns_none_when_no_valid_samples(spark):
     )
     short_df = spark.createDataFrame(data, schema=schema)
 
-    cbts = CatBoostTimeSeries(prediction_length=5, max_depth=3, n_estimators=20, n_jobs=1)
+    cbts = CatBoostTimeSeries(
+        prediction_length=5, max_depth=3, n_estimators=20, n_jobs=1
+    )
 
-    train_data = [("A", base_date + timedelta(hours=i), float(100 + i)) for i in range(80)]
+    train_data = [
+        ("A", base_date + timedelta(hours=i), float(100 + i)) for i in range(80)
+    ]
     train_df = spark.createDataFrame(train_data, schema=schema)
     cbts.train(train_df)
 

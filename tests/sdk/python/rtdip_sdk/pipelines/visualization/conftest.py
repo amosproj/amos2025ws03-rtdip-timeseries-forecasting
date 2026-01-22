@@ -15,6 +15,7 @@
 """Pytest configuration for visualization tests."""
 
 import matplotlib
+
 matplotlib.use("Agg")  # Use non-interactive backend before importing pyplot
 
 import matplotlib.pyplot as plt

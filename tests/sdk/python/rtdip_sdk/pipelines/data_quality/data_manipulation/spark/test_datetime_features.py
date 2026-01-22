@@ -27,7 +27,9 @@ from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import (
 
 @pytest.fixture(scope="session")
 def spark():
-    spark_session = SparkSession.builder.master("local[2]").appName("test").getOrCreate()
+    spark_session = (
+        SparkSession.builder.master("local[2]").appName("test").getOrCreate()
+    )
     yield spark_session
     spark_session.stop()
 
@@ -145,9 +147,7 @@ def test_hour_minute_second(spark):
         ["timestamp", "value"],
     )
 
-    extractor = DatetimeFeatures(
-        df, "timestamp", features=["hour", "minute", "second"]
-    )
+    extractor = DatetimeFeatures(df, "timestamp", features=["hour", "minute", "second"])
     result_df = extractor.filter_data()
     rows = result_df.orderBy("value").collect()
 

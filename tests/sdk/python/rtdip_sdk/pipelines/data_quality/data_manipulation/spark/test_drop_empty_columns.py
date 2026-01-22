@@ -30,8 +30,7 @@ from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import (
 @pytest.fixture(scope="session")
 def spark():
     spark = (
-        SparkSession.builder
-        .master("local[1]")
+        SparkSession.builder.master("local[1]")
         .appName("test-drop-empty-and-useless-columns-wrapper")
         .getOrCreate()
     )
@@ -42,11 +41,11 @@ def spark():
 def test_drop_empty_and_constant_columns(spark):
     """Drops fully empty and constant columns"""
     data = {
-        "a": [1, 2, 3],                 # informative
+        "a": [1, 2, 3],  # informative
         "b": [np.nan, np.nan, np.nan],  # all NaN -> drop
-        "c": [5, 5, 5],                 # constant -> drop
-        "d": [np.nan, 7, 7],            # non-NaN all equal -> drop
-        "e": [1, np.nan, 2],            # at least 2 unique non-NaN -> keep
+        "c": [5, 5, 5],  # constant -> drop
+        "d": [np.nan, 7, 7],  # non-NaN all equal -> drop
+        "e": [1, np.nan, 2],  # at least 2 unique non-NaN -> keep
     }
     pdf = pd.DataFrame(data)
     sdf = spark.createDataFrame(pdf)

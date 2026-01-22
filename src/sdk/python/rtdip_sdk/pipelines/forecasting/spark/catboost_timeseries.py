@@ -37,7 +37,10 @@ from sktime.forecasting.base import ForecastingHorizon
 from ..interfaces import MachineLearningInterface
 from ..._pipeline_utils.models import Libraries, SystemType, PyPiLibrary
 
-from ..prediction_evaluation import calculate_timeseries_forecasting_metrics, calculate_timeseries_robustness_metrics
+from ..prediction_evaluation import (
+    calculate_timeseries_forecasting_metrics,
+    calculate_timeseries_robustness_metrics,
+)
 
 
 class CatboostTimeSeries(MachineLearningInterface):
@@ -117,6 +120,7 @@ class CatboostTimeSeries(MachineLearningInterface):
     print(metrics)
     ```
     """
+
     def __init__(
         self,
         target_col: str = "target",
@@ -239,7 +243,9 @@ class CatboostTimeSeries(MachineLearningInterface):
         self.model.fit(y=pdf[self.target_col], X=pdf.drop(columns=[self.target_col]))
         self.is_trained = True
 
-    def predict(self, predict_df: DataFrame, forecasting_horizon: ForecastingHorizon) -> DataFrame:
+    def predict(
+        self, predict_df: DataFrame, forecasting_horizon: ForecastingHorizon
+    ) -> DataFrame:
         """
         Makes predictions using the trained CatBoost forecaster.
 
@@ -278,6 +284,7 @@ class CatboostTimeSeries(MachineLearningInterface):
         pred_pdf = prediction.to_frame(name=self.target_col)
 
         from pyspark.sql import SparkSession
+
         spark = SparkSession.builder.getOrCreate()
 
         predictions_df = spark.createDataFrame(pred_pdf)
@@ -361,10 +368,7 @@ class CatboostTimeSeries(MachineLearningInterface):
         if pdf.empty:
             raise ValueError("Input DataFrame is empty.")
 
-
         pdf[self.timestamp_col] = pd.to_datetime(pdf[self.timestamp_col])
         pdf = pdf.set_index("timestamp").sort_index()
 
         return pdf
-
-

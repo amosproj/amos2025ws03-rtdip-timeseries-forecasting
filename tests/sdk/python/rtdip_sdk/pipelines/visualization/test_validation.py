@@ -62,14 +62,18 @@ class TestApplyColumnMapping:
     def test_missing_source_column_ignored(self):
         """Test that missing source columns are ignored by default (non-strict mode)."""
         df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
-        result = apply_column_mapping(df, column_mapping={"nonexistent": "timestamp", "a": "x"})
+        result = apply_column_mapping(
+            df, column_mapping={"nonexistent": "timestamp", "a": "x"}
+        )
         assert list(result.columns) == ["x", "b"]
 
     def test_invalid_source_column_strict_mode(self):
         """Test that error is raised when source column doesn't exist in strict mode."""
         df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
         with pytest.raises(VisualizationDataError) as exc_info:
-            apply_column_mapping(df, column_mapping={"nonexistent": "timestamp"}, strict=True)
+            apply_column_mapping(
+                df, column_mapping={"nonexistent": "timestamp"}, strict=True
+            )
         assert "Source columns not found" in str(exc_info.value)
 
     def test_inplace_false(self):
@@ -202,9 +206,7 @@ class TestCoerceTypes:
                 "other": ["a", "b"],
             }
         )
-        result = coerce_types(
-            df, datetime_cols=["timestamp"], numeric_cols=["value"]
-        )
+        result = coerce_types(df, datetime_cols=["timestamp"], numeric_cols=["value"])
         assert pd.api.types.is_datetime64_any_dtype(result["timestamp"])
         assert pd.api.types.is_numeric_dtype(result["value"])
         assert result["other"].dtype == object
@@ -316,6 +318,7 @@ class TestColumnMappingIntegration:
         fig = plot.plot()
         assert fig is not None
         import matplotlib.pyplot as plt
+
         plt.close(fig)
 
     def test_error_message_with_hint(self):

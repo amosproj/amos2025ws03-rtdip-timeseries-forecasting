@@ -86,12 +86,11 @@ class SelectColumnsByCorrelation(PandasDataManipulationBaseInterface):
     correlation_threshold: float
 
     def __init__(
-            self,
-            df: PandasDataFrame,
-            columns_to_keep: list[str],
-            target_col_name: str,
-            correlation_threshold: float = 0.6
-
+        self,
+        df: PandasDataFrame,
+        columns_to_keep: list[str],
+        target_col_name: str,
+        correlation_threshold: float = 0.6,
     ) -> None:
         self.df = df
         self.columns_to_keep = columns_to_keep
@@ -159,7 +158,9 @@ class SelectColumnsByCorrelation(PandasDataManipulationBaseInterface):
             )
 
         # Validate that all columns_to_keep exist in the DataFrame
-        missing_keep_cols = [col for col in self.columns_to_keep if col not in self.df.columns]
+        missing_keep_cols = [
+            col for col in self.columns_to_keep if col not in self.df.columns
+        ]
         if missing_keep_cols:
             raise ValueError(
                 f"The following columns from `columns_to_keep` are missing in the DataFrame: {missing_keep_cols}"
@@ -171,7 +172,7 @@ class SelectColumnsByCorrelation(PandasDataManipulationBaseInterface):
                 "correlation_threshold must be between 0.0 and 1.0 (inclusive)."
             )
 
-        corr = self.df.select_dtypes(include='number').corr()
+        corr = self.df.select_dtypes(include="number").corr()
 
         # Ensure the target column is part of the numeric correlation matrix
         if self.target_col_name not in corr.columns:
@@ -191,8 +192,3 @@ class SelectColumnsByCorrelation(PandasDataManipulationBaseInterface):
         result_df = result_df[columns]
 
         return result_df
-
-
-
-
-

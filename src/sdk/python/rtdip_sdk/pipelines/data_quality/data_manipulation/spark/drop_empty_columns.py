@@ -1,10 +1,11 @@
-
 from ..interfaces import DataManipulationBaseInterface
 from ...._pipeline_utils.models import Libraries, SystemType
 from pyspark.sql import DataFrame
 from pandas import DataFrame as PandasDataFrame
 
-from ..pandas.drop_empty_columns import DropEmptyAndUselessColumns as PandasDropEmptyAndUselessColumns
+from ..pandas.drop_empty_columns import (
+    DropEmptyAndUselessColumns as PandasDropEmptyAndUselessColumns,
+)
 
 
 class DropEmptyAndUselessColumns(DataManipulationBaseInterface):
@@ -59,11 +60,13 @@ class DropEmptyAndUselessColumns(DataManipulationBaseInterface):
     df: DataFrame
 
     def __init__(
-            self,
-            df: DataFrame,
+        self,
+        df: DataFrame,
     ) -> None:
         self.df = df
-        self.pandas_DropEmptyAndUselessColumns = PandasDropEmptyAndUselessColumns(df.toPandas())
+        self.pandas_DropEmptyAndUselessColumns = PandasDropEmptyAndUselessColumns(
+            df.toPandas()
+        )
 
     @staticmethod
     def system_type():
@@ -94,8 +97,8 @@ class DropEmptyAndUselessColumns(DataManipulationBaseInterface):
         """
         result_pdf = self.pandas_DropEmptyAndUselessColumns.apply()
         from pyspark.sql import SparkSession
+
         spark = SparkSession.builder.getOrCreate()
 
         result_df = spark.createDataFrame(result_pdf)
         return result_df
-

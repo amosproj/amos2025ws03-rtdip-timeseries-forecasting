@@ -23,7 +23,9 @@ from sklearn.metrics import (
 )
 
 
-def calculate_timeseries_forecasting_metrics(y_test: np.ndarray, y_pred: np.ndarray, negative_metrics: bool = True) -> dict:
+def calculate_timeseries_forecasting_metrics(
+    y_test: np.ndarray, y_pred: np.ndarray, negative_metrics: bool = True
+) -> dict:
     """
     Calculates MAE, MSE, RMSE, MAPE and MASE for the parameter Dataframes.
 
@@ -71,10 +73,10 @@ def calculate_timeseries_forecasting_metrics(y_test: np.ndarray, y_pred: np.ndar
 
     # SMAPE (Symmetric Mean Absolute Percentage Error)
     smape = (
-            100
-            * (
-                    2 * np.abs(y_test - y_pred) / (np.abs(y_test) + np.abs(y_pred) + 1e-10)
-            ).mean()
+        100
+        * (
+            2 * np.abs(y_test - y_pred) / (np.abs(y_test) + np.abs(y_pred) + 1e-10)
+        ).mean()
     )
 
     # AutoGluon uses negative metrics (higher is better)
@@ -91,8 +93,12 @@ def calculate_timeseries_forecasting_metrics(y_test: np.ndarray, y_pred: np.ndar
     return metrics
 
 
-def calculate_timeseries_robustness_metrics(y_test: np.ndarray, y_pred: np.ndarray,
-                                            negative_metrics: bool = False, tail_percentage: float = 0.2) -> dict:
+def calculate_timeseries_robustness_metrics(
+    y_test: np.ndarray,
+    y_pred: np.ndarray,
+    negative_metrics: bool = False,
+    tail_percentage: float = 0.2,
+) -> dict:
     """
     Takes the tails from the input dataframes and calls calculate_timeseries_forecasting_metrics() with them
 
@@ -114,12 +120,12 @@ def calculate_timeseries_robustness_metrics(y_test: np.ndarray, y_pred: np.ndarr
     y_test_r = y_test[-cut:]
     y_pred_r = y_pred[-cut:]
 
-    metrics = calculate_timeseries_forecasting_metrics(y_test_r, y_pred_r, negative_metrics)
+    metrics = calculate_timeseries_forecasting_metrics(
+        y_test_r, y_pred_r, negative_metrics
+    )
 
     robustness_metrics = {}
     for key in metrics.keys():
         robustness_metrics[key + "_r"] = metrics[key]
 
     return robustness_metrics
-
-

@@ -55,7 +55,9 @@ def test_forecasting_metrics_length_mismatch_raises():
     y_test = np.array([1.0, 2.0, 3.0], dtype=float)
     y_pred = np.array([1.0, 2.0], dtype=float)
 
-    with pytest.raises(ValueError, match="Prediction length .* does not match test length"):
+    with pytest.raises(
+        ValueError, match="Prediction length .* does not match test length"
+    ):
         calculate_timeseries_forecasting_metrics(y_test=y_test, y_pred=y_pred)
 
 
@@ -64,7 +66,9 @@ def test_forecasting_metrics_keys_present(simple_series):
     Test that all expected metric keys exist.
     """
     y_test, y_pred = simple_series
-    metrics = calculate_timeseries_forecasting_metrics(y_test=y_test, y_pred=y_pred, negative_metrics=True)
+    metrics = calculate_timeseries_forecasting_metrics(
+        y_test=y_test, y_pred=y_pred, negative_metrics=True
+    )
 
     for key in ["MAE", "RMSE", "MAPE", "MASE", "SMAPE"]:
         assert key in metrics, f"Missing metric key: {key}"
@@ -76,8 +80,12 @@ def test_forecasting_metrics_negative_flag_flips_sign(simple_series):
     """
     y_test, y_pred = simple_series
 
-    m_pos = calculate_timeseries_forecasting_metrics(y_test=y_test, y_pred=y_pred, negative_metrics=False)
-    m_neg = calculate_timeseries_forecasting_metrics(y_test=y_test, y_pred=y_pred, negative_metrics=True)
+    m_pos = calculate_timeseries_forecasting_metrics(
+        y_test=y_test, y_pred=y_pred, negative_metrics=False
+    )
+    m_neg = calculate_timeseries_forecasting_metrics(
+        y_test=y_test, y_pred=y_pred, negative_metrics=True
+    )
 
     for k in ["MAE", "RMSE", "MAPE", "MASE", "SMAPE"]:
         if np.isnan(m_pos[k]):
@@ -100,7 +108,9 @@ def test_forecasting_metrics_known_values(simple_series):
     # |2-1|=1, |3-2|=1, |4-3|=1 => mae_naive=1 => mase = 0.5/1 = 0.5
     expected_mase = 0.5
 
-    metrics = calculate_timeseries_forecasting_metrics(y_test=y_test, y_pred=y_pred, negative_metrics=False)
+    metrics = calculate_timeseries_forecasting_metrics(
+        y_test=y_test, y_pred=y_pred, negative_metrics=False
+    )
 
     assert np.isclose(metrics["MAE"], expected_mae)
     assert np.isclose(metrics["RMSE"], expected_rmse)
@@ -117,9 +127,13 @@ def test_forecasting_metrics_mape_all_near_zero_returns_nan(near_zero_series):
     Test that MAPE returns NaN when all y_test values are filtered out by the near-zero mask.
     """
     y_test, y_pred = near_zero_series
-    metrics = calculate_timeseries_forecasting_metrics(y_test=y_test, y_pred=y_pred, negative_metrics=False)
+    metrics = calculate_timeseries_forecasting_metrics(
+        y_test=y_test, y_pred=y_pred, negative_metrics=False
+    )
 
-    assert np.isnan(metrics["MAPE"]), "MAPE should be NaN when all y_test values are near zero"
+    assert np.isnan(
+        metrics["MAPE"]
+    ), "MAPE should be NaN when all y_test values are near zero"
     # The other metrics should still be computed (finite) for this case
     assert np.isfinite(metrics["MAE"])
     assert np.isfinite(metrics["RMSE"])
@@ -133,7 +147,9 @@ def test_forecasting_metrics_single_point_mase_is_nan():
     y_test = np.array([10.0], dtype=float)
     y_pred = np.array([11.0], dtype=float)
 
-    metrics = calculate_timeseries_forecasting_metrics(y_test=y_test, y_pred=y_pred, negative_metrics=False)
+    metrics = calculate_timeseries_forecasting_metrics(
+        y_test=y_test, y_pred=y_pred, negative_metrics=False
+    )
     assert np.isnan(metrics["MASE"]), "MASE should be NaN for single-point series"
     # SMAPE should be finite
     assert np.isfinite(metrics["SMAPE"])
@@ -147,8 +163,12 @@ def test_forecasting_metrics_mase_fallback_when_naive_mae_zero():
     y_test = np.array([5.0, 5.0, 5.0, 5.0], dtype=float)
     y_pred = np.array([6.0, 4.0, 5.0, 5.0], dtype=float)
 
-    metrics = calculate_timeseries_forecasting_metrics(y_test=y_test, y_pred=y_pred, negative_metrics=False)
-    assert np.isclose(metrics["MASE"], metrics["MAE"]), "MASE should equal MAE when naive MAE is zero"
+    metrics = calculate_timeseries_forecasting_metrics(
+        y_test=y_test, y_pred=y_pred, negative_metrics=False
+    )
+    assert np.isclose(
+        metrics["MASE"], metrics["MAE"]
+    ), "MASE should equal MAE when naive MAE is zero"
 
 
 def test_robustness_metrics_suffix_and_values(simple_series):
@@ -189,8 +209,12 @@ def test_robustness_metrics_tail_percentage_one_matches_full(simple_series):
     """
     y_test, y_pred = simple_series
 
-    full = calculate_timeseries_forecasting_metrics(y_test=y_test, y_pred=y_pred, negative_metrics=False)
-    r_full = calculate_timeseries_robustness_metrics(y_test=y_test, y_pred=y_pred, negative_metrics=False, tail_percentage=1.0)
+    full = calculate_timeseries_forecasting_metrics(
+        y_test=y_test, y_pred=y_pred, negative_metrics=False
+    )
+    r_full = calculate_timeseries_robustness_metrics(
+        y_test=y_test, y_pred=y_pred, negative_metrics=False, tail_percentage=1.0
+    )
 
     for k, v in full.items():
         rk = f"{k}_r"

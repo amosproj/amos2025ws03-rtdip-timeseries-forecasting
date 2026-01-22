@@ -291,7 +291,11 @@ class DecompositionPlot(MatplotlibVisualizationInterface):
 
         for idx, seasonal_col in enumerate(self._seasonal_columns):
             period = _extract_period_from_column(seasonal_col)
-            color = config.get_seasonal_color(period, idx) if period else config.DECOMPOSITION_COLORS["seasonal"]
+            color = (
+                config.get_seasonal_color(period, idx)
+                if period
+                else config.DECOMPOSITION_COLORS["seasonal"]
+            )
             label = _get_period_label(period, self.period_labels)
 
             self._axes[panel_idx].plot(
@@ -529,7 +533,11 @@ class MSTLDecompositionPlot(MatplotlibVisualizationInterface):
 
         for idx, seasonal_col in enumerate(self._seasonal_columns):
             period = _extract_period_from_column(seasonal_col)
-            color = config.get_seasonal_color(period, idx) if period else config.DECOMPOSITION_COLORS["seasonal"]
+            color = (
+                config.get_seasonal_color(period, idx)
+                if period
+                else config.DECOMPOSITION_COLORS["seasonal"]
+            )
             label = _get_period_label(period, self.period_labels)
 
             zoom_n = self.zoom_periods.get(seasonal_col)
@@ -573,7 +581,9 @@ class MSTLDecompositionPlot(MatplotlibVisualizationInterface):
         plot_title = self.title
         if plot_title is None:
             n_patterns = len(self._seasonal_columns)
-            pattern_str = f"{n_patterns} seasonal pattern{'s' if n_patterns > 1 else ''}"
+            pattern_str = (
+                f"{n_patterns} seasonal pattern{'s' if n_patterns > 1 else ''}"
+            )
             if self.sensor_id:
                 plot_title = f"MSTL Decomposition ({pattern_str}) - {self.sensor_id}"
             else:
@@ -828,7 +838,11 @@ class DecompositionDashboard(MatplotlibVisualizationInterface):
 
         for idx, col in enumerate(self._seasonal_columns):
             period = _extract_period_from_column(col)
-            color = config.get_seasonal_color(period, idx) if period else config.DECOMPOSITION_COLORS["seasonal"]
+            color = (
+                config.get_seasonal_color(period, idx)
+                if period
+                else config.DECOMPOSITION_COLORS["seasonal"]
+            )
             label = _get_period_label(period, self.period_labels)
             strength = self._statistics["seasonality_strength"].get(col, 0)
 
@@ -876,24 +890,32 @@ class DecompositionDashboard(MatplotlibVisualizationInterface):
 
             table_data.append(["Component", "Variance %", "Strength"])
 
-            table_data.append([
-                "Trend",
-                f"{self._statistics['variance_explained']['trend']:.1f}%",
-                "-",
-            ])
+            table_data.append(
+                [
+                    "Trend",
+                    f"{self._statistics['variance_explained']['trend']:.1f}%",
+                    "-",
+                ]
+            )
 
             for col in self._seasonal_columns:
                 period = _extract_period_from_column(col)
-                label = _get_period_label(period, self.period_labels) if period else "Seasonal"
+                label = (
+                    _get_period_label(period, self.period_labels)
+                    if period
+                    else "Seasonal"
+                )
                 var_pct = self._statistics["variance_explained"].get(col, 0)
                 strength = self._statistics["seasonality_strength"].get(col, 0)
                 table_data.append([label, f"{var_pct:.1f}%", f"{strength:.3f}"])
 
-            table_data.append([
-                "Residual",
-                f"{self._statistics['variance_explained']['residual']:.1f}%",
-                "-",
-            ])
+            table_data.append(
+                [
+                    "Residual",
+                    f"{self._statistics['variance_explained']['residual']:.1f}%",
+                    "-",
+                ]
+            )
 
             table_data.append(["", "", ""])
             table_data.append(["Residual Diagnostics", "", ""])
@@ -1127,7 +1149,11 @@ class MultiSensorDecompositionPlot(MatplotlibVisualizationInterface):
 
                 for s_idx, col in enumerate(seasonal_cols):
                     period = _extract_period_from_column(col)
-                    color = config.get_seasonal_color(period, s_idx) if period else config.DECOMPOSITION_COLORS["seasonal"]
+                    color = (
+                        config.get_seasonal_color(period, s_idx)
+                        if period
+                        else config.DECOMPOSITION_COLORS["seasonal"]
+                    )
                     label = _get_period_label(period, self.period_labels)
 
                     trend_plus_seasonal = df["trend"] + df[col]
@@ -1149,7 +1175,9 @@ class MultiSensorDecompositionPlot(MatplotlibVisualizationInterface):
                     label="Original",
                 )
 
-            sensor_display = sensor_id[:30] + "..." if len(sensor_id) > 30 else sensor_id
+            sensor_display = (
+                sensor_id[:30] + "..." if len(sensor_id) > 30 else sensor_id
+            )
             ax.set_title(sensor_display, fontsize=config.FONT_SIZES["subtitle"])
 
             if idx == 0:

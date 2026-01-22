@@ -1,4 +1,3 @@
-
 import pytest
 from datetime import datetime, timedelta
 
@@ -370,4 +369,3 @@ def test_settings():
     settings = CatboostTimeSeries.settings()
     assert settings is not None
     assert isinstance(settings, dict)
-
