@@ -307,6 +307,13 @@ nav:
                       - Classical Decomposition: sdk/code-reference/pipelines/decomposition/spark/classical_decomposition.md
                       - STL Decomposition: sdk/code-reference/pipelines/decomposition/spark/stl_decomposition.md
                       - MSTL Decomposition: sdk/code-reference/pipelines/decomposition/spark/mstl_decomposition.md
+              - Anomaly Detection:
+                  - Spark:
+                      - IQR:
+                          - IQR Anomaly Detection: sdk/code-reference/pipelines/anomaly_detection/spark/iqr/iqr_anomaly_detection.md
+                          - Decomposition IQR Anomaly Detection: sdk/code-reference/pipelines/anomaly_detection/spark/iqr/decomposition_iqr_anomaly_detection.md
+                      - MAD:
+                          - MAD Anomaly Detection: sdk/code-reference/pipelines/anomaly_detection/spark/mad/mad_anomaly_detection.md
               - Visualization:
                   - Matplotlib:
                       - Anomaly Detection: sdk/code-reference/pipelines/visualization/matplotlib/anomaly_detection.md
