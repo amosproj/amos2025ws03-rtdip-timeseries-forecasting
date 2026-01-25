@@ -48,14 +48,12 @@ class GlobalMadScorer(MadScorer):
     A minimum MAD value of 1.0 is enforced to avoid division by zero and numerical
     instability.
 
-    This component takes a Pandas Series as input and returns a Pandas Series
-    containing anomaly scores.
+    This component operates on Pandas Series objects.
 
     Example
     -------
     ```python
     import pandas as pd
-    import numpy as np
     from rtdip_sdk.pipelines.anomaly_detection.mad import GlobalMadScorer
 
     data = pd.Series([10, 11, 10, 12, 500, 11, 10])
@@ -65,15 +63,18 @@ class GlobalMadScorer(MadScorer):
 
     print(scores)
     ```
-
-    Parameters:
-        series (pd.Series): Input time series containing numeric values to be scored.
-
-    Returns:
-        pd.Series: MAD-based anomaly scores for each observation in the input series.
     """
 
     def score(self, series: pd.Series) -> pd.Series:
+        """
+        Computes MAD-based anomaly scores for a Pandas Series.
+
+        Parameters:
+            series (pd.Series): Input time series containing numeric values to be scored.
+
+        Returns:
+            pd.Series: MAD-based anomaly scores for each observation in the input series.
+        """
         median = series.median()
         mad = np.median(np.abs(series - median))
         mad = max(mad, 1.0)
@@ -100,14 +101,12 @@ class RollingMadScorer(MadScorer):
     A minimum MAD value of 1.0 is enforced to avoid division by zero and numerical
     instability.
 
-    This component takes a Pandas Series as input and returns a Pandas Series
-    containing rolling anomaly scores.
+    This component operates on Pandas Series objects.
 
     Example
     -------
     ```python
     import pandas as pd
-    import numpy as np
     from rtdip_sdk.pipelines.anomaly_detection.mad import RollingMadScorer
 
     data = pd.Series([10, 11, 10, 12, 500, 11, 10, 9, 10, 12])
@@ -123,9 +122,6 @@ class RollingMadScorer(MadScorer):
             Defaults to 3.5.
         window_size (int): Size of the rolling window used to compute local median
             and MAD values. Defaults to 30.
-
-    Returns:
-        pd.Series: Rolling MAD-based anomaly scores for each observation.
     """
 
     def __init__(self, threshold: float = 3.5, window_size: int = 30):
@@ -133,6 +129,15 @@ class RollingMadScorer(MadScorer):
         self.window_size = window_size
 
     def score(self, series: pd.Series) -> pd.Series:
+        """
+        Computes rolling MAD-based anomaly scores for a Pandas Series.
+
+        Parameters:
+            series (pd.Series): Input time series containing numeric values to be scored.
+
+        Returns:
+            pd.Series: Rolling MAD-based anomaly scores for each observation in the input series.
+        """
         rolling_median = series.rolling(self.window_size).median()
         rolling_mad = (
             series.rolling(self.window_size)
@@ -155,9 +160,6 @@ class MadAnomalyDetection(AnomalyDetectionInterface):
     By default, the `GlobalMadScorer` is used, which computes anomaly scores based on
     global median and MAD statistics. Alternative scorers such as `RollingMadScorer`
     can be injected to support adaptive, window-based anomaly detection.
-
-    The output DataFrame contains only anomalous records and includes the computed
-    MAD z-score values.
 
     This component is intended for batch-oriented anomaly detection pipelines using
     PySpark as the execution backend.
@@ -191,12 +193,6 @@ class MadAnomalyDetection(AnomalyDetectionInterface):
     Parameters:
         scorer (Optional[MadScorer]): MAD-based scoring strategy used to compute anomaly
             scores. If None, `GlobalMadScorer` is used by default.
-
-    Returns:
-        PySpark DataFrame: DataFrame containing only records classified as anomalies.
-            Includes additional columns:
-            - `mad_zscore`: Computed MAD-based anomaly score.
-            - `is_anomaly`: Boolean anomaly flag.
     """
 
     def __init__(self, scorer: Optional[MadScorer] = None):
@@ -215,6 +211,23 @@ class MadAnomalyDetection(AnomalyDetectionInterface):
         return {}
 
     def detect(self, df: DataFrame) -> DataFrame:
+        """
+        Detects anomalies in the input DataFrame using the configured MAD scorer.
+
+        The method computes MAD-based anomaly scores on the `value` column, adds the
+        columns `mad_zscore` and `is_anomaly`, and returns only the rows classified
+        as anomalies.
+
+        Parameters:
+            df (DataFrame): Input PySpark DataFrame containing at least a `value` column.
+
+        Returns:
+            DataFrame: PySpark DataFrame containing only records classified as anomalies.
+                Includes additional columns:
+                - `mad_zscore`: Computed MAD-based anomaly score.
+                - `is_anomaly`: Boolean anomaly flag.
+        """
+
         pdf = df.toPandas()
 
         scores = self.scorer.score(pdf["value"])
@@ -289,13 +302,6 @@ class DecompositionMadAnomalyDetection(AnomalyDetectionInterface):
             separately per group. Defaults to None.
         timestamp_column (str): Name of the timestamp column. Defaults to `"timestamp"`.
         value_column (str): Name of the value column. Defaults to `"value"`.
-
-    Returns:
-        PySpark DataFrame: DataFrame containing only records classified as anomalies.
-            Includes additional columns:
-            - `residual`: Residual component produced by the decomposition step.
-            - `mad_zscore`: MAD-based anomaly score computed on `residual`.
-            - `is_anomaly`: Boolean anomaly flag.
     """
 
     def __init__(
@@ -328,13 +334,18 @@ class DecompositionMadAnomalyDetection(AnomalyDetectionInterface):
 
     def _decompose(self, df: DataFrame) -> DataFrame:
         """
-        Custom decomposition logic.
+        Applies the configured decomposition method (STL or MSTL) to the input DataFrame.
 
-        :param df: Input DataFrame
-        :type df: DataFrame
-        :return: Decomposed DataFrame
-        :rtype: DataFrame
+        Parameters:
+            df (DataFrame): Input PySpark DataFrame containing the time series data.
+
+        Returns:
+            DataFrame: Decomposed PySpark DataFrame expected to include a `residual` column.
+
+        Raises:
+            ValueError: If `self.decomposition` is not one of `'stl'` or `'mstl'`.
         """
+
         if self.decomposition == "stl":
 
             return STLDecomposition(
@@ -358,6 +369,23 @@ class DecompositionMadAnomalyDetection(AnomalyDetectionInterface):
             raise ValueError(f"Unsupported decomposition method: {self.decomposition}")
 
     def detect(self, df: DataFrame) -> DataFrame:
+        """
+        Detects anomalies by scoring the decomposition residuals using the configured MAD scorer.
+
+        The method decomposes the input series, computes MAD-based scores on the `residual`
+        column, and returns only rows classified as anomalies.
+
+        Parameters:
+            df (DataFrame): Input PySpark DataFrame containing the time series data.
+
+        Returns:
+            DataFrame: PySpark DataFrame containing only records classified as anomalies.
+                Includes additional columns:
+                - `residual`: Residual component produced by the decomposition step.
+                - `mad_zscore`: MAD-based anomaly score computed on `residual`.
+                - `is_anomaly`: Boolean anomaly flag.
+        """
+        
         decomposed_df = self._decompose(df)
         pdf = decomposed_df.toPandas().sort_values(self.timestamp_column)
 
