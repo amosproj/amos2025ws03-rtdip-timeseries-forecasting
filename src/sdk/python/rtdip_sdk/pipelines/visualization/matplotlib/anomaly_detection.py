@@ -75,17 +75,17 @@ class AnomalyDetectionPlot(MatplotlibVisualizationInterface):
         """
         Initialize the AnomalyDetectionPlot component.
 
-        Args:
-            ts_data: PySpark DataFrame with 'timestamp' and 'value' columns
-            ad_data: PySpark DataFrame with 'timestamp' and 'value' columns
-            sensor_id: Optional sensor identifier
-            title: Optional custom title
-            figsize: Figure size tuple
-            linewidth: Line width for the time series
-            anomaly_marker_size: Size of anomaly markers
-            anomaly_color: Color for anomaly points
-            ts_color: Color for time series line
-            ax: Optional existing matplotlib axis to plot on
+        Parameters:
+            ts_data (SparkDataFrame): PySpark DataFrame with 'timestamp' and 'value' columns.
+            ad_data (SparkDataFrame): PySpark DataFrame with 'timestamp' and 'value' columns.
+            sensor_id (str, optional): Sensor identifier used in the plot title.
+            title (str, optional): Custom plot title. If not provided, a default title is used.
+            figsize (tuple, optional): Figure size as (width, height). Defaults to (18, 6).
+            linewidth (float, optional): Line width for time series. Defaults to 1.6.
+            anomaly_marker_size (int, optional): Marker size for anomalies. Defaults to 70.
+            anomaly_color (str, optional): Color for anomaly markers. Defaults to "red".
+            ts_color (str, optional): Color for time series line. Defaults to "steelblue".
+            ax (matplotlib.axes.Axes, optional): Existing matplotlib axis to plot on.
         """
         super().__init__()
 
@@ -106,7 +106,13 @@ class AnomalyDetectionPlot(MatplotlibVisualizationInterface):
         self._validate_data()
 
     def _validate_data(self) -> None:
-        """Validate that required columns exist in DataFrames."""
+        """
+        Validate input data format and data types.
+
+        Ensures that both `ts_data` and `ad_data` contain the required columns
+        {'timestamp', 'value'}. Automatically converts timestamp columns to
+        datetime and value columns to numeric types when necessary.
+        """
         required_cols = {"timestamp", "value"}
 
         if not required_cols.issubset(self.ts_data.columns):
@@ -146,11 +152,12 @@ class AnomalyDetectionPlot(MatplotlibVisualizationInterface):
         """
         Generate the anomaly detection visualization.
 
-        Args:
-            ax: Optional matplotlib axis to plot on. If None, creates new figure.
+        Parameters:
+            ax (matplotlib.axes.Axes, optional): Existing matplotlib axis to plot on.
+                If None, a new figure and axis are created.
 
         Returns:
-            matplotlib.figure.Figure: The generated figure
+            Figure | SubFigure: The generated matplotlib figure containing the plot.
         """
         # Use provided ax or instance ax
         use_ax = ax if ax is not None else self.ax
@@ -214,13 +221,13 @@ class AnomalyDetectionPlot(MatplotlibVisualizationInterface):
         """
         Save the visualization to file.
 
-        Args:
-            filepath (Union[str, Path]): Output file path
-            dpi (int): Dots per inch. Defaults to 150
-            **kwargs (Any): Additional arguments passed to savefig
+        Parameters:
+            filepath (Union[str, Path]): Output file path.
+            dpi (int, optional): Dots per inch for the saved figure. Defaults to 150.
+            **kwargs (Any): Additional keyword arguments passed to `matplotlib.pyplot.savefig`.
 
         Returns:
-            Path: The path to the saved file
+            Path: Path to the saved figure file.
         """
 
         assert self._fig is not None, "Plot the figure before saving."
