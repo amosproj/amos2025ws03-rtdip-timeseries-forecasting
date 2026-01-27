@@ -27,9 +27,9 @@ class AnomalyDetectionPlotInteractive(PlotlyVisualizationInterface):
     Plot time series data with detected anomalies highlighted using Plotly.
 
     This component is functionally equivalent to the Matplotlib-based
-    AnomalyDetectionPlot. It visualizes the full time series as a line and
-    overlays detected anomalies as markers. Hover tooltips on anomaly markers
-    explicitly show timestamp and value.
+    AnomalyDetectionPlot. It visualizes the full time series as an interactive
+    line chart and overlays detected anomalies as markers. Hover tooltips on
+    anomaly markers display timestamp and value information.
     """
 
     def __init__(
@@ -42,6 +42,20 @@ class AnomalyDetectionPlotInteractive(PlotlyVisualizationInterface):
         anomaly_color: str = "red",
         anomaly_marker_size: int = 8,
     ) -> None:
+        """
+        Initialize the AnomalyDetectionPlotInteractive component.
+
+        Parameters:
+            ts_data (SparkDataFrame): PySpark DataFrame with 'timestamp' and 'value' columns
+                containing the full time series data.
+            ad_data (SparkDataFrame, optional): PySpark DataFrame with 'timestamp' and 'value'
+                columns containing detected anomalies.
+            sensor_id (str, optional): Sensor identifier used in the plot title.
+            title (str, optional): Custom plot title. If not provided, a default title is used.
+            ts_color (str, optional): Color for the time series line. Defaults to "steelblue".
+            anomaly_color (str, optional): Color for anomaly markers. Defaults to "red".
+            anomaly_marker_size (int, optional): Marker size for anomaly points. Defaults to 8.
+        """
         super().__init__()
 
         # Convert Spark DataFrames to Pandas
@@ -58,7 +72,13 @@ class AnomalyDetectionPlotInteractive(PlotlyVisualizationInterface):
         self._validate_data()
 
     def _validate_data(self) -> None:
-        """Validate required columns and enforce correct dtypes."""
+        """
+        Validate input data format and data types.
+
+        Ensures that both `ts_data` and `ad_data` contain the required columns
+        {'timestamp', 'value'}. Automatically converts timestamp columns to
+        datetime and value columns to numeric types when necessary.
+        """
 
         required_cols = {"timestamp", "value"}
 
@@ -88,9 +108,8 @@ class AnomalyDetectionPlotInteractive(PlotlyVisualizationInterface):
         Generate the Plotly anomaly detection visualization.
 
         Returns:
-            plotly.graph_objects.Figure
+            plotly.graph_objects.Figure: The generated interactive Plotly figure.
         """
-
         ts_sorted = self.ts_data.sort_values("timestamp")
 
         fig = go.Figure()
@@ -155,14 +174,15 @@ class AnomalyDetectionPlotInteractive(PlotlyVisualizationInterface):
         Save the Plotly visualization to file.
 
         If the file suffix is `.html`, the figure is saved as an interactive HTML
-        file. Otherwise, a static image is written (requires kaleido).
+        file. Otherwise, a static image is written (requires the `kaleido` backend).
 
-        Args:
-            filepath (Union[str, Path]): Output file path
-            **kwargs (Any): Additional arguments passed to write_html or write_image
+        Parameters:
+            filepath (Union[str, Path]): Output file path.
+            **kwargs (Any): Additional keyword arguments passed to `write_html`
+                or `write_image`.
 
         Returns:
-            Path: The path to the saved file
+            Path: Path to the saved visualization file.
         """
         assert self._fig is not None, "Plot the figure before saving."
 
