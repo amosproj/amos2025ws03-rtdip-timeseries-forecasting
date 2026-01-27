@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 
 from pyspark.sql import DataFrame
+from pyspark.sql.types import StructField, StructType, DoubleType, BooleanType
 from typing import Optional, List, Union
 
 from ...._pipeline_utils.models import (
@@ -210,6 +211,22 @@ class MadAnomalyDetection(AnomalyDetectionInterface):
     def settings() -> dict:
         return {}
 
+    @staticmethod
+    def _build_result_schema(df: DataFrame) -> StructType:
+        return StructType(
+            list(df.schema.fields)
+            + [
+                StructField("mad_zscore", DoubleType(), True),
+                StructField("is_anomaly", BooleanType(), True),
+            ]
+        )
+
+    @staticmethod
+    def _empty_result_df(df: DataFrame, schema: StructType) -> DataFrame:
+        """Create an empty DataFrame with the correct schema using pandas."""
+        empty_pdf = pd.DataFrame(columns=schema.fieldNames())
+        return df.sparkSession.createDataFrame(empty_pdf, schema=schema)
+
     def detect(self, df: DataFrame) -> DataFrame:
         """
         Detects anomalies in the input DataFrame using the configured MAD scorer.
@@ -228,13 +245,25 @@ class MadAnomalyDetection(AnomalyDetectionInterface):
                 - `is_anomaly`: Boolean anomaly flag.
         """
 
+        result_schema = self._build_result_schema(df)
+
         pdf = df.toPandas()
+        if pdf.empty:
+            return self._empty_result_df(df, result_schema)
 
         scores = self.scorer.score(pdf["value"])
         pdf["mad_zscore"] = scores
         pdf["is_anomaly"] = self.scorer.is_anomaly(scores)
 
-        return df.sparkSession.createDataFrame(pdf[pdf["is_anomaly"]].copy())
+        anomalies_pdf = pdf[pdf["is_anomaly"]].copy()
+        anomalies_pdf = anomalies_pdf[result_schema.fieldNames()]
+
+        if anomalies_pdf.empty:
+            return self._empty_result_df(df, result_schema)
+
+        # Ensure correct column order matches schema
+        anomalies_pdf = anomalies_pdf[result_schema.fieldNames()]
+        return df.sparkSession.createDataFrame(anomalies_pdf, schema=result_schema)
 
 
 class DecompositionMadAnomalyDetection(AnomalyDetectionInterface):
@@ -368,6 +397,16 @@ class DecompositionMadAnomalyDetection(AnomalyDetectionInterface):
         else:
             raise ValueError(f"Unsupported decomposition method: {self.decomposition}")
 
+    @staticmethod
+    def _build_result_schema(df: DataFrame) -> StructType:
+        return StructType(
+            list(df.schema.fields)
+            + [
+                StructField("mad_zscore", DoubleType(), True),
+                StructField("is_anomaly", BooleanType(), True),
+            ]
+        )
+
     def detect(self, df: DataFrame) -> DataFrame:
         """
         Detects anomalies by scoring the decomposition residuals using the configured MAD scorer.
@@ -385,12 +424,25 @@ class DecompositionMadAnomalyDetection(AnomalyDetectionInterface):
                 - `mad_zscore`: MAD-based anomaly score computed on `residual`.
                 - `is_anomaly`: Boolean anomaly flag.
         """
-        
+
         decomposed_df = self._decompose(df)
+        result_schema = self._build_result_schema(decomposed_df)
+
         pdf = decomposed_df.toPandas().sort_values(self.timestamp_column)
+
+        if pdf.empty:
+            return MadAnomalyDetection._empty_result_df(decomposed_df, result_schema)
 
         scores = self.scorer.score(pdf["residual"])
         pdf["mad_zscore"] = scores
         pdf["is_anomaly"] = self.scorer.is_anomaly(scores)
 
-        return df.sparkSession.createDataFrame(pdf[pdf["is_anomaly"]].copy())
+        anomalies_pdf = pdf[pdf["is_anomaly"]].copy()
+        anomalies_pdf = anomalies_pdf[result_schema.fieldNames()]
+
+        if anomalies_pdf.empty:
+            return MadAnomalyDetection._empty_result_df(decomposed_df, result_schema)
+
+        # Ensure correct column order matches schema
+        anomalies_pdf = anomalies_pdf[result_schema.fieldNames()]
+        return df.sparkSession.createDataFrame(anomalies_pdf, schema=result_schema)

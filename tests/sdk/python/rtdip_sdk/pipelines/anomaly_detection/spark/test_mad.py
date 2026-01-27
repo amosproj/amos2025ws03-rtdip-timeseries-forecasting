@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import numpy as np
+import pandas as pd
 import pytest
 
 from src.sdk.python.rtdip_sdk.pipelines.anomaly_detection.spark.mad.mad_anomaly_detection import (
@@ -20,6 +22,21 @@ from src.sdk.python.rtdip_sdk.pipelines.anomaly_detection.spark.mad.mad_anomaly_
     MadAnomalyDetection,
     DecompositionMadAnomalyDetection,
 )
+
+
+@pytest.fixture
+def spark_dataframe_without_anomalies(spark_session):
+    data = [(i, float(10.0 + 0.05 * np.sin(i))) for i in range(1, 31)]
+    columns = ["timestamp", "value"]
+    return spark_session.createDataFrame(data, columns)
+
+
+@pytest.fixture
+def spark_dataframe_without_anomalies_timestamp(spark_session):
+    timestamps = pd.date_range("2025-02-01", periods=72, freq="h")
+    values = 10.0 + 0.1 * np.sin(np.arange(72))
+    pdf = pd.DataFrame({"timestamp": timestamps, "value": values})
+    return spark_session.createDataFrame(pdf)
 
 
 @pytest.fixture
@@ -38,6 +55,28 @@ def spark_dataframe_with_anomalies(spark_session):
     ]
     columns = ["timestamp", "value"]
     return spark_session.createDataFrame(data, columns)
+
+
+def test_mad_anomaly_detection_global_no_anomalies(
+    spark_dataframe_without_anomalies,
+):
+    mad_detector = MadAnomalyDetection()
+
+    result_df = mad_detector.detect(spark_dataframe_without_anomalies)
+
+    assert result_df.count() == 0
+    assert result_df.columns == ["timestamp", "value", "mad_zscore", "is_anomaly"]
+
+
+def test_mad_anomaly_detection_rolling_no_anomalies(
+    spark_dataframe_without_anomalies,
+):
+    mad_detector = MadAnomalyDetection(scorer=RollingMadScorer(window_size=5))
+
+    result_df = mad_detector.detect(spark_dataframe_without_anomalies)
+
+    assert result_df.count() == 0
+    assert result_df.columns == ["timestamp", "value", "mad_zscore", "is_anomaly"]
 
 
 def test_mad_anomaly_detection_global(spark_dataframe_with_anomalies):
@@ -136,7 +175,7 @@ def spark_dataframe_synthetic_stl(spark_session):
     n = 500
     period = 24
 
-    timestamps = pd.date_range("2025-01-01", periods=n, freq="H")
+    timestamps = pd.date_range("2025-01-01", periods=n, freq="h")
     trend = 0.02 * np.arange(n)
     seasonal = 5 * np.sin(2 * np.pi * np.arange(n) / period)
     noise = 0.3 * np.random.randn(n)
@@ -149,6 +188,33 @@ def spark_dataframe_synthetic_stl(spark_session):
     pdf = pd.DataFrame({"timestamp": timestamps, "value": values})
 
     return spark_session.createDataFrame(pdf)
+
+
+@pytest.mark.parametrize(
+    "decomposition, scorer",
+    [
+        ("stl", GlobalMadScorer(threshold=3.5)),
+        ("mstl", RollingMadScorer(threshold=3.5, window_size=24)),
+    ],
+)
+def test_decomposition_mad_anomaly_detection_no_anomalies(
+    spark_dataframe_without_anomalies_timestamp,
+    decomposition,
+    scorer,
+):
+    detector = DecompositionMadAnomalyDetection(
+        scorer=scorer,
+        decomposition=decomposition,
+        period=24,
+        timestamp_column="timestamp",
+        value_column="value",
+    )
+
+    result_df = detector.detect(spark_dataframe_without_anomalies_timestamp)
+
+    assert result_df.count() == 0
+    assert "mad_zscore" in result_df.columns
+    assert "is_anomaly" in result_df.columns
 
 
 @pytest.mark.parametrize(
