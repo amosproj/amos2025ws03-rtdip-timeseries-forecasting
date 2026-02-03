@@ -1,0 +1,30 @@
+Title	URL	Assignees	Status	Estimated size	Real size
+Finalize user, (technical) design, and build/deploy documentation	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/111	Mehdi-kbz	Awaiting Review	3	
+Preparing and showcasing Implementation on Demo Day	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/133	BelmontR, Perimora	Awaiting Review	3	
+Project Report	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/110	BelmontR, hpfref, Mehdi-kbz, Perimora, simonselbig	Awaiting Review	1	
+Merge Project to Core Repository based on Shell Feedback (Part 2)	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/132	hpfref, simonselbig	Awaiting Review	3	
+Review Possible Fixes for Import Issues	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/116	Mehdi-kbz	Feature Archive	5	3
+Merge Project to Core Repository and Adjust based on Shell Feedback	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/122	hpfref, simonselbig	Feature Archive	5	5
+Demo Day Presentation	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/113	Perimora	Feature Archive	3	3
+Demo Video	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/109	BelmontR	Feature Archive	3	3
+One Demo Day Slide	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/108	BelmontR	Feature Archive	1	2
+Merge Preparation	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/115	hpfref, simonselbig	Feature Archive	5	3
+Anomaly Detection and Evaluating 3W_Dataset	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/117	Mehdi-kbz	Feature Archive	2	2
+Training, Forecasting and Evaluating 3W_Dataset	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/107	BelmontR	Feature Archive	3	3
+Make all Datasets Running with All Models and Evaluate All	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/114	BelmontR, simonselbig	Feature Archive	3	2
+SCADA Decomposition	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/105	hpfref	Feature Archive	3	3
+Preprocessing of 3W_Dataset	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/98	Mehdi-kbz	Feature Archive	3	3
+Assessment of Robustness and long time predictions	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/88	BelmontR	Feature Archive	3	2
+Refactor Wiki	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/97	simonselbig	Feature Archive	2	2
+Add Visualization Component for Timeseries Decomposition	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/78	simonselbig	Feature Archive	2	2
+Add Visualization Component for Anomaly Detection	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/77	Perimora	Feature Archive	2	2
+Optimization and Improvement of Anomaly Detection Approach	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/92	Mehdi-kbz	Feature Archive	3	3
+Adjust and Fix CI/CD Pipeline	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/57	BelmontR	Feature Archive	3	3
+Refactor Components for Spark-Compatible API	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/90	BelmontR, hpfref	Feature Archive	3	2
+Adjusting previous features to base enviroment	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/87	hpfref	Feature Archive	2	1
+Base Environment	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/86	Perimora	Feature Archive	8	8
+Document previous features in the software architecture	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/89	simonselbig	Feature Archive	2	2
+Integrate Timeseries Forecasting Results Visualization into the SDK	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/76	simonselbig	Feature Archive	3	3
+Optimization and Improvement of Anomaly Detection Approach	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/66	Perimora	Feature Archive	3	3
+Timeseries Forecasting Improvement with Other Models	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/74	BelmontR	Feature Archive	3	3
+Apply Timeseries Decomposition on shell Dataset	https://github.com/amosproj/amos2025ws03-rtdip-timeseries-forecasting/issues/67	hpfref	Feature Archive	3	2
